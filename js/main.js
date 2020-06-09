@@ -16,10 +16,12 @@ var mapPinTemplate = document.querySelector('#pin')
   .content
   .querySelector('.map__pin');
 var mapPinImage = mapPinTemplate.querySelector('img');
+var mapPinsList = document.querySelector('.map__pins');
 
 
 var init = function () {
   map.classList.remove('map--faded'); // временное решение
+  drawMapPins();
 };
 
 var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
@@ -49,7 +51,7 @@ var getRandomDataFromArray = function (array, result) {
 
 var getRandomAnnouncement = function (i) {
   var addressObject = {
-    'x': getRandomNumber(0, mapOverlay.offsetWidth),
+    'x': getRandomNumber(0, mapOverlay.offsetWidth - (mapPinTemplate.offsetWidth / 2)),
     // check
     'y': getRandomNumber(130, 630)
   };
@@ -75,7 +77,7 @@ var getRandomAnnouncement = function (i) {
   return announcement;
 };
 
-var getRandomAnnouncements = function () {
+var getAnnouncements = function () {
   var announcementsArray = [];
   for (var i = 0; i < ANNOUNCEMENTS_AMOUNT; i++) {
     announcementsArray.push(getRandomAnnouncement(i));
@@ -83,13 +85,27 @@ var getRandomAnnouncements = function () {
   return announcementsArray;
 };
 
-var getUniquePin = function (announcement) {
+var getUniqueMapPin = function (announcement) {
   var pinElement = mapPinTemplate.cloneNode(true);
-  pinElement.style.left = announcement.location.x - (mapPinTemplate.offsetWidth / 2); // ?
-  pinElement.style.top = announcement.location.y - MAP_PIN_HEIGHT; // ?
+  console.log(announcement.location.x, mapPinTemplate.offsetWidth);
+  pinElement.style.left = (announcement.location.x - (mapPinTemplate.offsetWidth / 2)) + 'px'; // ?
+  console.log(pinElement.style.left);
+  pinElement.style.top = announcement.location.y - pinElement.offsetHeight + 'px'; // ?
+  // console.log(pinElement.offsetHeight);
   mapPinImage.src = announcement.author.avatar;
   mapPinImage.alt = announcement.offer.title;
   return pinElement;
+};
+
+var drawMapPins = function () {
+  var fragment = document.createDocumentFragment();
+  var announcements = getAnnouncements();
+  console.log(announcements);
+  for (var i = 0; i < announcements.length; i++) {
+    var uniqueMapPin = getUniqueMapPin(announcements[i]);
+    fragment.appendChild(uniqueMapPin);
+  }
+  mapPinsList.appendChild(fragment);
 };
 
 init();
