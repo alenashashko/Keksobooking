@@ -8,15 +8,26 @@ var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditio
 var CHARACTERISTICS = ['красивые', 'виды', 'уютные', 'комнаты', 'удобные', 'чистые', 'просторные', 'апартаменты',
   'прекрасные', 'атмосферные', 'удобства', 'недорогие', 'новые'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var MAP_PIN_HEIGHT = 84; // ?
 
-var map = document.querySelector('.map__overlay');
+var map = document.querySelector('.map');
+var mapOverlay = document.querySelector('.map__overlay');
+var mapPinTemplate = document.querySelector('#pin')
+  .content
+  .querySelector('.map__pin');
+var mapPinImage = mapPinTemplate.querySelector('img');
+
+
+var init = function () {
+  map.classList.remove('map--faded'); // временное решение
+};
 
 var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
   var randomNumber = Math.round(minRandomNumber + Math.random() * (maxRandomNumber - minRandomNumber));
   return randomNumber;
 };
 
-var getRandom = function (array, result) {
+var getRandomDataFromArray = function (array, result) {
   var randomArray = array.slice().sort(function () {
     return getRandomNumber(0, 1) - 0.5;
   });
@@ -26,8 +37,9 @@ var getRandom = function (array, result) {
     return randomArray;
   } else if (result === 'string') {
     var string = '';
-    for (var i = 0; i <= getRandomNumber(0, randomArray.length - 1); i++) { // пофиксить
-      string += ' ' + randomArray[i]; // убрать пустую строку
+    // на i ругается eslint как на уже существующую переменную, поэтому название переменной - j
+    for (var j = 0; j <= getRandomNumber(0, randomArray.length - 1); j++) {
+      string += ' ' + randomArray[j]; // убрать пустую строку
     }
     return string;
   } else {
@@ -37,7 +49,7 @@ var getRandom = function (array, result) {
 
 var getRandomAnnouncement = function (i) {
   var addressObject = {
-    'x': getRandomNumber(0, map.offsetWidth),
+    'x': getRandomNumber(0, mapOverlay.offsetWidth),
     // check
     'y': getRandomNumber(130, 630)
   };
@@ -46,7 +58,7 @@ var getRandomAnnouncement = function (i) {
       'avatar': 'img/avatars/user0' + (i + 1) + '.png'
     },
     'offer': {
-      'title': getRandom(CHARACTERISTICS, 'string'),
+      'title': getRandomDataFromArray(CHARACTERISTICS, 'string'),
       'address': addressObject['x'] + ', ' + addressObject['y'],
       'price': getRandomNumber(1, 1000000),
       'type': TYPES[getRandomNumber(0, 3)],
@@ -54,9 +66,9 @@ var getRandomAnnouncement = function (i) {
       'guests': getRandomNumber(1, 3),
       'checkin': CHECKIN_AND_CHECKOUT_TIME[getRandomNumber(0, 2)],
       'checkout': CHECKIN_AND_CHECKOUT_TIME[getRandomNumber(0, 2)],
-      'features': getRandom(FEATURES, 'array'),
-      'description': getRandom(CHARACTERISTICS, 'string'),
-      'photos': getRandom(PHOTOS, 'array'),
+      'features': getRandomDataFromArray(FEATURES, 'array'),
+      'description': getRandomDataFromArray(CHARACTERISTICS, 'string'),
+      'photos': getRandomDataFromArray(PHOTOS, 'array'),
     },
     'location': addressObject
   };
@@ -71,3 +83,13 @@ var getRandomAnnouncements = function () {
   return announcementsArray;
 };
 
+var getUniquePin = function (announcement) {
+  var pinElement = mapPinTemplate.cloneNode(true);
+  pinElement.style.left = announcement.location.x - (mapPinTemplate.offsetWidth / 2); // ?
+  pinElement.style.top = announcement.location.y - MAP_PIN_HEIGHT; // ?
+  mapPinImage.src = announcement.author.avatar;
+  mapPinImage.alt = announcement.offer.title;
+  return pinElement;
+};
+
+init();
