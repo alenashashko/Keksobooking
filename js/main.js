@@ -45,7 +45,7 @@ var shuffleArray = function (array) {
 var getRandomDataFromArray = function (array, result) {
   var randomArray = shuffleArray(array); // можно ли называть одинаково разные локальные переменные?
   if (result === 'array') {
-    var i = getRandomNumber(0, randomArray.length - 1);
+    var i = getRandomNumber(1, randomArray.length - 1);
     randomArray.splice(i);
     return randomArray;
   } else if (result === 'string') {
