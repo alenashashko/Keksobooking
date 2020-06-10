@@ -3,19 +3,18 @@
 var ANNOUNCEMENTS_AMOUNT = 8;
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN_AND_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
-var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner',
-  'description'];
+var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var CHARACTERISTICS = ['красивые', 'виды', 'уютные', 'комнаты', 'удобные', 'чистые', 'просторные', 'апартаменты',
   'прекрасные', 'атмосферные', 'удобства', 'недорогие', 'новые'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-var MAP_PIN_HEIGHT = 84; // ?
+var MAP_PIN_WIDTH = 50; // ?
+var MAP_PIN_HEIGHT = 70; // ?
 
 var map = document.querySelector('.map');
 var mapOverlay = document.querySelector('.map__overlay');
 var mapPinTemplate = document.querySelector('#pin')
   .content
   .querySelector('.map__pin');
-var mapPinImage = mapPinTemplate.querySelector('img');
 var mapPinsList = document.querySelector('.map__pins');
 
 
@@ -35,15 +34,11 @@ var getRandomDataFromArray = function (array, result) {
   });
   if (result === 'array') {
     var i = getRandomNumber(0, randomArray.length - 1);
-    randomArray.splice(i); // допускается, что в новом массиве вообще не останется значений
+    randomArray.splice(i);
+    // допускается, что в новом массиве вообще не останется значений, то есть не будет ни одного фото или ни одного features
     return randomArray;
   } else if (result === 'string') {
-    var string = '';
-    // на i ругается eslint как на уже существующую переменную, поэтому название переменной - j
-    for (var j = 0; j <= getRandomNumber(0, randomArray.length - 1); j++) {
-      string += ' ' + randomArray[j]; // убрать пустую строку
-    }
-    return string;
+    return randomArray.slice(0, getRandomNumber(0, randomArray.length - 1)).join(' ');
   } else {
     return null;
   }
@@ -51,8 +46,7 @@ var getRandomDataFromArray = function (array, result) {
 
 var getRandomAnnouncement = function (i) {
   var addressObject = {
-    'x': getRandomNumber(0, mapOverlay.offsetWidth - (mapPinTemplate.offsetWidth / 2)),
-    // check
+    'x': getRandomNumber(0, mapOverlay.offsetWidth),
     'y': getRandomNumber(130, 630)
   };
   var announcement = {
@@ -61,7 +55,7 @@ var getRandomAnnouncement = function (i) {
     },
     'offer': {
       'title': getRandomDataFromArray(CHARACTERISTICS, 'string'),
-      'address': addressObject['x'] + ', ' + addressObject['y'],
+      'address': addressObject.x + ', ' + addressObject.y,
       'price': getRandomNumber(1, 1000000),
       'type': TYPES[getRandomNumber(0, 3)],
       'rooms': getRandomNumber(1, 3),
@@ -87,11 +81,10 @@ var getAnnouncements = function () {
 
 var getUniqueMapPin = function (announcement) {
   var pinElement = mapPinTemplate.cloneNode(true);
-  console.log(announcement.location.x, mapPinTemplate.offsetWidth);
-  pinElement.style.left = (announcement.location.x - (mapPinTemplate.offsetWidth / 2)) + 'px'; // ?
-  console.log(pinElement.style.left);
-  pinElement.style.top = announcement.location.y - pinElement.offsetHeight + 'px'; // ?
-  // console.log(pinElement.offsetHeight);
+  pinElement.style.left = (announcement.location.x - (MAP_PIN_WIDTH / 2)) + 'px'; // ?
+  pinElement.style.top = announcement.location.y - MAP_PIN_HEIGHT + 'px'; // ?
+
+  var mapPinImage = pinElement.querySelector('img');
   mapPinImage.src = announcement.author.avatar;
   mapPinImage.alt = announcement.offer.title;
   return pinElement;
@@ -100,7 +93,6 @@ var getUniqueMapPin = function (announcement) {
 var drawMapPins = function () {
   var fragment = document.createDocumentFragment();
   var announcements = getAnnouncements();
-  console.log(announcements);
   for (var i = 0; i < announcements.length; i++) {
     var uniqueMapPin = getUniqueMapPin(announcements[i]);
     fragment.appendChild(uniqueMapPin);
