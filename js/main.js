@@ -7,8 +7,11 @@ var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditio
 var CHARACTERISTICS = ['красивые', 'виды', 'уютные', 'комнаты', 'удобные', 'чистые', 'просторные', 'апартаменты',
   'прекрасные', 'атмосферные', 'удобства', 'недорогие', 'новые'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-var MAP_PIN_WIDTH = 50; // ?
-var MAP_PIN_HEIGHT = 70; // ?
+
+var MapPinSizes = {
+  width: 50,
+  height: 70
+};
 
 var map = document.querySelector('.map');
 var mapOverlay = document.querySelector('.map__overlay');
@@ -28,18 +31,25 @@ var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
   return randomNumber;
 };
 
+var shuffleArray = function (array) {
+  var randomArray = array.slice(); // можно ли называть одинаково разные локальные переменные?
+  for (var i = randomArray.length - 1; i > 0; i--) {
+    var j = getRandomNumber(0, i);
+    var swap = randomArray[i];
+    randomArray[i] = randomArray[j];
+    randomArray[j] = swap;
+  }
+  return randomArray;
+};
+
 var getRandomDataFromArray = function (array, result) {
-  var randomArray = array.slice().sort(function () {
-    return getRandomNumber(0, 1) - 0.5;
-  });
+  var randomArray = shuffleArray(array); // можно ли называть одинаково разные локальные переменные?
   if (result === 'array') {
     var i = getRandomNumber(0, randomArray.length - 1);
     randomArray.splice(i);
-    // допускается, что в новом массиве вообще не останется значений, то есть не будет ни одного фото или ни одного features
     return randomArray;
   } else if (result === 'string') {
     return randomArray.slice(0, getRandomNumber(0, randomArray.length - 1)).join(' ');
-    // допускается, что как минимум одно слово в заголовке и описании (description) останется
   } else {
     return null;
   }
@@ -82,8 +92,8 @@ var getAnnouncements = function () {
 
 var getUniqueMapPin = function (announcement) {
   var pinElement = mapPinTemplate.cloneNode(true);
-  pinElement.style.left = (announcement.location.x - (MAP_PIN_WIDTH / 2)) + 'px'; // ?
-  pinElement.style.top = announcement.location.y - MAP_PIN_HEIGHT + 'px'; // ?
+  pinElement.style.left = announcement.location.x - MapPinSizes.width / 2 + 'px';
+  pinElement.style.top = announcement.location.y - MapPinSizes.height + 'px';
 
   var mapPinImage = pinElement.querySelector('img');
   mapPinImage.src = announcement.author.avatar;
