@@ -39,6 +39,7 @@ var getRandomDataFromArray = function (array, result) {
     return randomArray;
   } else if (result === 'string') {
     return randomArray.slice(0, getRandomNumber(0, randomArray.length - 1)).join(' ');
+    // допускается, что как минимум одно слово в заголовке и описании (description) останется
   } else {
     return null;
   }
