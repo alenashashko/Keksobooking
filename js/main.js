@@ -31,7 +31,7 @@ var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
   return randomNumber;
 };
 
-var shuffleArray = function (array) {
+var getShuffledArray = function (array) {
   var randomArray = array.slice(); // можно ли называть одинаково разные локальные переменные?
   for (var i = randomArray.length - 1; i > 0; i--) {
     var j = getRandomNumber(0, i);
@@ -43,7 +43,7 @@ var shuffleArray = function (array) {
 };
 
 var getRandomDataFromArray = function (array, result) {
-  var randomArray = shuffleArray(array); // можно ли называть одинаково разные локальные переменные?
+  var randomArray = getShuffledArray(array); // можно ли называть одинаково разные локальные переменные?
   if (result === 'array') {
     var i = getRandomNumber(1, randomArray.length - 1);
     randomArray.splice(i);
