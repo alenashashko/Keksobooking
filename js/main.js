@@ -19,11 +19,18 @@ var mapPinTemplate = document.querySelector('#pin')
   .content
   .querySelector('.map__pin');
 var mapPinsList = document.querySelector('.map__pins');
+var announcementCardTemplate = document.querySelector('#card')
+  .content
+  .querySelector('.map__card');
+var mapFilters = document.querySelector('.map__filters-container');
 
 
 var init = function () {
+  var announcements = getAnnouncementsArray();
+
   map.classList.remove('map--faded'); // временное решение
-  drawMapPins();
+  drawMapPins(announcements);
+  drawAnnouncementCard(announcements);
 };
 
 var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
@@ -32,7 +39,7 @@ var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
 };
 
 var getShuffledArray = function (array) {
-  var randomArray = array.slice(); // можно ли называть одинаково разные локальные переменные?
+  var randomArray = array.slice();
   for (var i = randomArray.length - 1; i > 0; i--) {
     var j = getRandomNumber(0, i);
     var swap = randomArray[i];
@@ -43,9 +50,9 @@ var getShuffledArray = function (array) {
 };
 
 var getRandomDataFromArray = function (array, result) {
-  var randomArray = getShuffledArray(array); // можно ли называть одинаково разные локальные переменные?
+  var randomArray = getShuffledArray(array);
   if (result === 'array') {
-    var i = getRandomNumber(1, randomArray.length - 1);
+    var i = getRandomNumber(1, randomArray.length);
     randomArray.splice(i);
     return randomArray;
   } else if (result === 'string') {
@@ -53,6 +60,13 @@ var getRandomDataFromArray = function (array, result) {
   } else {
     return null;
   }
+};
+
+var createElement = function (tagName, firstClassName, secondClassName) {
+  var element = document.createElement(tagName);
+  element.classList.add(firstClassName);
+  element.classList.add(secondClassName);
+  return element;
 };
 
 var getRandomAnnouncement = function (i) {
@@ -82,7 +96,7 @@ var getRandomAnnouncement = function (i) {
   return announcement;
 };
 
-var getAnnouncements = function () {
+var getAnnouncementsArray = function () {
   var announcementsArray = [];
   for (var i = 0; i < ANNOUNCEMENTS_AMOUNT; i++) {
     announcementsArray.push(getRandomAnnouncement(i));
@@ -101,9 +115,8 @@ var getUniqueMapPin = function (announcement) {
   return pinElement;
 };
 
-var drawMapPins = function () {
+var drawMapPins = function (announcements) { // (*) объединить в одну функцию отрисовки элемента? (но в ним исп. разные методы добавления ребенка в родителя: insertBefore/appendChild)
   var fragment = document.createDocumentFragment();
-  var announcements = getAnnouncements();
   for (var i = 0; i < announcements.length; i++) {
     var uniqueMapPin = getUniqueMapPin(announcements[i]);
     fragment.appendChild(uniqueMapPin);
@@ -111,4 +124,63 @@ var drawMapPins = function () {
   mapPinsList.appendChild(fragment);
 };
 
+var getUniqueAnnouncementCard = function (announcement) {
+  var cardElement = announcementCardTemplate.cloneNode(true);
+  // нужно ли для querySelector'ов заводить отдельные переменные?
+  cardElement.querySelector('.popup__title').textContent = announcement.offer.title;
+  cardElement.querySelector('.popup__text--address').textContent = announcement.offer.address;
+  cardElement.querySelector('.popup__text--price').textContent = announcement.offer.price + '₽/ночь';
+
+  var offerType;
+  if (announcement.offer.type === 'palace') {
+    offerType = 'Дворец';
+  } else if (announcement.offer.type === 'flat') {
+    offerType = 'Квартира';
+  } else if (announcement.offer.type === 'house') {
+    offerType = 'Дом';
+  } else if (announcement.offer.type === 'bungalo') {
+    offerType = 'Бунгало';
+  }
+  cardElement.querySelector('.popup__type').textContent = offerType;
+
+  cardElement.querySelector('.popup__text--capacity')
+    .textContent = announcement.offer.rooms + ' комнаты для ' + announcement.offer.guests + ' гостей';
+  cardElement.querySelector('.popup__text--time')
+    .textContent = 'Заезд после ' + announcement.offer.checkin + ', выезд до ' + announcement.offer.checkout;
+
+  var offerFeatures = cardElement.querySelector('.popup__features');
+  offerFeatures.innerHTML = ''; // ?
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < announcement.offer.features.length; i++) { // ?
+    var feature = createElement('li', 'popup__feature', 'popup__feature--' + announcement.offer.features[i]);
+    fragment.appendChild(feature);
+  }
+  offerFeatures.appendChild(fragment);
+
+  cardElement.querySelector('.popup__description').textContent = announcement.offer.description;
+
+  var offerPhotos = cardElement.querySelector('.popup__photos');
+  var offerPhoto = offerPhotos.querySelector('.popup__photo');
+  offerPhotos.innerHTML = '';
+  for (var j = 0; j < announcement.offer.photos.length; j++) {
+    var photo = createElement('img', 'popup__photo');
+    photo.src = announcement.offer.photos[j];
+    photo.width = offerPhoto.width;
+    photo.height = offerPhoto.height;
+    fragment.appendChild(photo);
+  }
+  offerPhotos.appendChild(fragment);
+
+  cardElement.querySelector('.popup__avatar').src = announcement.author.avatar;
+
+  return cardElement;
+};
+
+var drawAnnouncementCard = function (announcements) { // (*) объединить в одну функцию отрисовки элемента (но в ним исп. разные методы добавления ребенка в родителя: insertBefore/appendChild)
+  var card = getUniqueAnnouncementCard(announcements[0]);
+  map.insertBefore(card, mapFilters);
+};
+
 init();
+
+// Если данных для заполнения не хватает, соответствующий блок в карточке скрывается.
