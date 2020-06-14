@@ -1,12 +1,20 @@
 'use strict';
 
 var ANNOUNCEMENTS_AMOUNT = 8;
-var TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN_AND_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var CHARACTERISTICS = ['красивые', 'виды', 'уютные', 'комнаты', 'удобные', 'чистые', 'просторные', 'апартаменты',
   'прекрасные', 'атмосферные', 'удобства', 'недорогие', 'новые'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+
+var TypesOfAccommodation = {
+  'palace': 'Дворец',
+  'flat': 'Квартира',
+  'house': 'Дом',
+  'bungalo': 'Бунгало'
+};
+
+var TYPES = Object.keys(TypesOfAccommodation);
 
 var MapPinSizes = {
   width: 50,
@@ -115,7 +123,7 @@ var getUniqueMapPin = function (announcement) {
   return pinElement;
 };
 
-var drawMapPins = function (announcements) { // (*) объединить в одну функцию отрисовки элемента? (но в ним исп. разные методы добавления ребенка в родителя: insertBefore/appendChild)
+var drawMapPins = function (announcements) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < announcements.length; i++) {
     var uniqueMapPin = getUniqueMapPin(announcements[i]);
@@ -131,16 +139,7 @@ var getUniqueAnnouncementCard = function (announcement) {
   cardElement.querySelector('.popup__text--address').textContent = announcement.offer.address;
   cardElement.querySelector('.popup__text--price').textContent = announcement.offer.price + '₽/ночь';
 
-  var offerType;
-  if (announcement.offer.type === 'palace') {
-    offerType = 'Дворец';
-  } else if (announcement.offer.type === 'flat') {
-    offerType = 'Квартира';
-  } else if (announcement.offer.type === 'house') {
-    offerType = 'Дом';
-  } else if (announcement.offer.type === 'bungalo') {
-    offerType = 'Бунгало';
-  }
+  var offerType = TypesOfAccommodation[announcement.offer.type];
   cardElement.querySelector('.popup__type').textContent = offerType;
 
   cardElement.querySelector('.popup__text--capacity')
@@ -176,7 +175,7 @@ var getUniqueAnnouncementCard = function (announcement) {
   return cardElement;
 };
 
-var drawAnnouncementCard = function (announcements) { // (*) объединить в одну функцию отрисовки элемента (но в ним исп. разные методы добавления ребенка в родителя: insertBefore/appendChild)
+var drawAnnouncementCard = function (announcements) {
   var card = getUniqueAnnouncementCard(announcements[0]);
   map.insertBefore(card, mapFilters);
 };
