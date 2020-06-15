@@ -10,6 +10,11 @@ var CHARACTERISTICS = ['красивые', 'виды', 'уютные', 'комн
   'прекрасные', 'атмосферные', 'удобства', 'недорогие', 'новые'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
+var MapPinControlSizes = { // сравнить?
+  WIDTH: 65,
+  HEIGHT: 84
+};
+
 var MapPinSizes = {
   width: 50,
   height: 70
@@ -28,11 +33,13 @@ var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
 var mapFiltersForm = document.querySelector('.map__filters');
 var mapFilters = mapFiltersForm.children;
 var mapPinControl = document.querySelector('.map__pin--main');
+var addressInput = document.querySelector('input[name="address"]');
 
 // объявления функций
 
 var init = function () {
   drawMapPins();
+  setInactivePageStatus();
 };
 
 var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
@@ -64,22 +71,39 @@ var getRandomDataFromArray = function (array, result) {
   }
 };
 
-var getDisabledElements = function (elements) {
+var setDisabledElements = function (elements) {
   for (var i = 0; i < elements.length; i++) {
     elements[i].disabled = true;
   }
-  return elements;
-
-  // for (var field of announcementFormFields) {
-  //   field.disabled = true;
-  // };
 };
 
-var getActiveElements = function (elements) {
+var setActiveElements = function (elements) {
   for (var i = 0; i < elements.length; i++) {
     elements[i].disabled = false;
   }
-  return elements;
+};
+
+var setAddressValue = function (pageStatus) {
+  var mapPinControlLeftCoordinate = parseInt(mapPinControl.style.left, 10);
+  var mapPinControlTopCoordinate = parseInt(mapPinControl.style.top, 10);
+  var additionToLeftCoordinate = MapPinControlSizes.WIDTH / 2;
+  var additionToTopCoordinate = (pageStatus === 'active') ? MapPinControlSizes.HEIGHT : MapPinControlSizes.HEIGHT / 2;
+  addressInput.value = Math.round(mapPinControlLeftCoordinate + additionToLeftCoordinate) + ', ' +
+  Math.round(mapPinControlTopCoordinate + additionToTopCoordinate); // центра метки либо центра кружка метки?
+};
+
+var setInactivePageStatus = function () { // setAddressValue('inactive'); вынести из функции?
+  setDisabledElements(announcementFormFieldsets);
+  setDisabledElements(mapFilters);
+  setAddressValue('inactive');
+};
+
+var setActivePageStatus = function () {
+  map.classList.remove('map--faded');
+  announcementForm.classList.remove('ad-form--disabled');
+  setActiveElements(announcementFormFieldsets);
+  setActiveElements(mapFilters);
+  setAddressValue('active'); // setAddressValue('active'); вынести из функции?
 };
 
 var getRandomAnnouncement = function (i) {
@@ -142,16 +166,20 @@ var drawMapPins = function () {
 
 init();
 
-getDisabledElements(announcementFormFieldsets);
-getDisabledElements(mapFiltersForm); // ?
-getDisabledElements(mapFilters);
+// РАСПРЕДЕЛИТЬ КОД
 
-mapPinControl.addEventListener('mousedown', function (evt) { // отмена изменений (disabled)
+mapPinControl.addEventListener('mousedown', function (evt) {
   if (evt.button === 0) {
-    map.classList.remove('map--faded');
-    announcementForm.classList.remove('ad-form--disabled');
-    getActiveElements(announcementFormFieldsets);
-    getActiveElements(mapFiltersForm);
-    getActiveElements(mapFilters);
+    setActivePageStatus();
   }
 });
+
+mapPinControl.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    setActivePageStatus();
+  }
+});
+
+// for (var field of announcementFormFieldsets) {
+//   console.log(field);
+// }; не работает
