@@ -7,7 +7,7 @@ var CHARACTERISTICS = ['красивые', 'виды', 'уютные', 'комн
   'прекрасные', 'атмосферные', 'удобства', 'недорогие', 'новые'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
-var TypesOfAccommodation = {
+var TypesOfAccommodation = { // ? исправлять
   'palace': 'Дворец',
   'flat': 'Квартира',
   'house': 'Дом',
@@ -17,8 +17,8 @@ var TypesOfAccommodation = {
 var TYPES = Object.keys(TypesOfAccommodation);
 
 var MapPinSizes = {
-  width: 50,
-  height: 70
+  WIDTH: 50,
+  HEIGHT: 70
 };
 
 var map = document.querySelector('.map');
@@ -78,7 +78,7 @@ var createElement = function (tagName, firstClassName, secondClassName) {
 };
 
 var getRandomAnnouncement = function (i) {
-  var addressObject = {
+  var address = {
     'x': getRandomNumber(0, mapOverlay.offsetWidth),
     'y': getRandomNumber(130, 630)
   };
@@ -88,7 +88,7 @@ var getRandomAnnouncement = function (i) {
     },
     'offer': {
       'title': getRandomDataFromArray(CHARACTERISTICS, 'string'),
-      'address': addressObject.x + ', ' + addressObject.y,
+      'address': address.x + ', ' + address.y,
       'price': getRandomNumber(1, 1000000),
       'type': TYPES[getRandomNumber(0, 3)],
       'rooms': getRandomNumber(1, 3),
@@ -99,7 +99,7 @@ var getRandomAnnouncement = function (i) {
       'description': getRandomDataFromArray(CHARACTERISTICS, 'string'),
       'photos': getRandomDataFromArray(PHOTOS, 'array'),
     },
-    'location': addressObject
+    'location': address
   };
   return announcement;
 };
@@ -114,8 +114,8 @@ var getAnnouncementsArray = function () {
 
 var getUniqueMapPin = function (announcement) {
   var pinElement = mapPinTemplate.cloneNode(true);
-  pinElement.style.left = announcement.location.x - MapPinSizes.width / 2 + 'px';
-  pinElement.style.top = announcement.location.y - MapPinSizes.height + 'px';
+  pinElement.style.left = announcement.location.x - MapPinSizes.WIDTH / 2 + 'px';
+  pinElement.style.top = announcement.location.y - MapPinSizes.HEIGHT + 'px';
 
   var mapPinImage = pinElement.querySelector('img');
   mapPinImage.src = announcement.author.avatar;
