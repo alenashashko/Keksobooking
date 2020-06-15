@@ -5,16 +5,17 @@ var CHECKIN_AND_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var CHARACTERISTICS = ['красивые', 'виды', 'уютные', 'комнаты', 'удобные', 'чистые', 'просторные', 'апартаменты',
   'прекрасные', 'атмосферные', 'удобства', 'недорогие', 'новые'];
-var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
-var TypesOfAccommodation = { // ? исправлять
+var typesOfAccommodation = {
   'palace': 'Дворец',
   'flat': 'Квартира',
   'house': 'Дом',
   'bungalo': 'Бунгало'
 };
 
-var TYPES = Object.keys(TypesOfAccommodation);
+var TYPES = Object.keys(typesOfAccommodation);
 
 var MapPinSizes = {
   WIDTH: 50,
@@ -38,7 +39,7 @@ var init = function () {
 
   map.classList.remove('map--faded'); // временное решение
   drawMapPins(announcements);
-  drawAnnouncementCard(announcements);
+  getUniqueAnnouncementCard(announcements[0]);
 };
 
 var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
@@ -71,14 +72,11 @@ var getRandomDataFromArray = function (array, result) {
 };
 
 var createElement = function (tagName) {
-  var classNames = arguments.splice(0, 1);
-
+  var classNames = Array.prototype.slice.call(arguments, [0, 1]);
   var element = document.createElement(tagName);
   for (var i = 0; i < classNames.length; i++) {
     element.classList.add(classNames[i]);
   }
-  // element.classList.add(firstClassName);
-  // element.classList.add(secondClassName);
   return element;
 };
 
@@ -139,12 +137,11 @@ var drawMapPins = function (announcements) {
 
 var getUniqueAnnouncementCard = function (announcement) {
   var cardElement = announcementCardTemplate.cloneNode(true);
-  // нужно ли для querySelector'ов заводить отдельные переменные?
   cardElement.querySelector('.popup__title').textContent = announcement.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = announcement.offer.address;
   cardElement.querySelector('.popup__text--price').textContent = announcement.offer.price + '₽/ночь';
 
-  var offerType = TypesOfAccommodation[announcement.offer.type];
+  var offerType = typesOfAccommodation[announcement.offer.type];
   cardElement.querySelector('.popup__type').textContent = offerType;
 
   cardElement.querySelector('.popup__text--capacity')
@@ -154,11 +151,11 @@ var getUniqueAnnouncementCard = function (announcement) {
 
   var offerFeatures = cardElement.querySelector('.popup__features');
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < announcement.offer.features.length; i++) { // ?
+  for (var i = 0; i < announcement.offer.features.length; i++) {
     var feature = createElement('li', 'popup__feature', 'popup__feature--' + announcement.offer.features[i]);
     fragment.appendChild(feature);
   }
-  offerFeatures.innerHTML = ''; // ?
+  offerFeatures.innerHTML = '';
   offerFeatures.appendChild(fragment);
 
   cardElement.querySelector('.popup__description').textContent = announcement.offer.description;
@@ -177,12 +174,7 @@ var getUniqueAnnouncementCard = function (announcement) {
 
   cardElement.querySelector('.popup__avatar').src = announcement.author.avatar;
 
-  return cardElement;
-};
-
-var drawAnnouncementCard = function (announcements) {
-  var card = getUniqueAnnouncementCard(announcements[0]);
-  map.insertBefore(card, mapFilters);
+  map.insertBefore(cardElement, mapFilters);
 };
 
 init();
