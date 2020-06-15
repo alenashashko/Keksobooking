@@ -151,7 +151,7 @@ mapPinControl.addEventListener('mousedown', function (evt) { // отмена и�
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
     getActiveElements(announcementFormFieldsets);
-    getDisabledElements(mapFiltersForm);
+    getActiveElements(mapFiltersForm);
     getActiveElements(mapFilters);
   }
 });
