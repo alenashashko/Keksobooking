@@ -1,5 +1,7 @@
 'use strict';
 
+// константы и перечисления
+
 var ANNOUNCEMENTS_AMOUNT = 8;
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN_AND_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
@@ -13,16 +15,23 @@ var MapPinSizes = {
   height: 70
 };
 
+// переменные
+
 var map = document.querySelector('.map');
 var mapOverlay = document.querySelector('.map__overlay');
 var mapPinTemplate = document.querySelector('#pin')
   .content
   .querySelector('.map__pin');
 var mapPinsList = document.querySelector('.map__pins');
+var announcementForm = document.querySelector('.ad-form');
+var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
+var mapFiltersForm = document.querySelector('.map__filters');
+var mapFilters = mapFiltersForm.children;
+var mapPinControl = document.querySelector('.map__pin--main');
 
+// объявления функций
 
 var init = function () {
-  map.classList.remove('map--faded'); // временное решение
   drawMapPins();
 };
 
@@ -53,6 +62,24 @@ var getRandomDataFromArray = function (array, result) {
   } else {
     return null;
   }
+};
+
+var getDisabledElements = function (elements) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].disabled = true;
+  }
+  return elements;
+
+  // for (var field of announcementFormFields) {
+  //   field.disabled = true;
+  // };
+};
+
+var getActiveElements = function (elements) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].disabled = false;
+  }
+  return elements;
 };
 
 var getRandomAnnouncement = function (i) {
@@ -111,4 +138,20 @@ var drawMapPins = function () {
   mapPinsList.appendChild(fragment);
 };
 
+// вызовы функций
+
 init();
+
+getDisabledElements(announcementFormFieldsets);
+getDisabledElements(mapFiltersForm); // ?
+getDisabledElements(mapFilters);
+
+mapPinControl.addEventListener('mousedown', function (evt) { // отмена изменений (disabled)
+  if (evt.button === 0) {
+    map.classList.remove('map--faded');
+    announcementForm.classList.remove('ad-form--disabled');
+    getActiveElements(announcementFormFieldsets);
+    getDisabledElements(mapFiltersForm);
+    getActiveElements(mapFilters);
+  }
+});
