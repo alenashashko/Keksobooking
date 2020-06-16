@@ -53,9 +53,22 @@ var addressInput = document.querySelector('input[name="address"]');
 var init = function () {
   var announcements = getAnnouncementsArray();
 
+  mapPinControl.addEventListener('mousedown', function (evt) {
+    if (evt.button === 0) {
+      setActivePageStatus();
+    }
+  });
+
+  mapPinControl.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Enter') {
+      setActivePageStatus();
+    }
+  });
+
   setInactivePageStatus();
   drawMapPins(announcements);
-  getUniqueAnnouncementCard(announcements[0]);
+  createUniqueAnnouncementCard(announcements[0]);
+
 };
 
 var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
@@ -78,7 +91,7 @@ var getRandomDataFromArray = function (array, result) {
   var randomArray = getShuffledArray(array);
   if (result === 'array') {
     var i = getRandomNumber(1, randomArray.length);
-    randomArray.splice(i);
+    randomArray.splice(0, i);
     return randomArray;
   } else if (result === 'string') {
     return randomArray.slice(0, getRandomNumber(0, randomArray.length - 1)).join(' ');
@@ -108,7 +121,7 @@ var setAddressValue = function (pageStatus) {
   Math.round(mapPinControlTopCoordinate + additionToTopCoordinate); // центра метки либо центра кружка метки?
 };
 
-var setInactivePageStatus = function () { // setAddressValue('inactive'); вынести из функции?
+var setInactivePageStatus = function () { // setAddressValue('inactive'); вынести из этой функции в init?
   setDisabledElements(announcementFormFieldsets);
   setDisabledElements(mapFilters);
   setAddressValue('inactive');
@@ -119,10 +132,10 @@ var setActivePageStatus = function () {
   announcementForm.classList.remove('ad-form--disabled');
   setActiveElements(announcementFormFieldsets);
   setActiveElements(mapFilters);
-  setAddressValue('active'); // setAddressValue('active'); вынести из функции?
+  setAddressValue('active'); // setAddressValue('active'); вынести из этой функции в обработчики клика и нажатия enter?
 };
 
-var createElement = function (tagName) {
+var createElement = function (tagName) { // назвать с get обязательно, если возвращает значение? getNewElement
   var classNames = Array.prototype.slice.call(arguments, [0, 1]);
   var element = document.createElement(tagName);
   for (var i = 0; i < classNames.length; i++) {
@@ -186,7 +199,7 @@ var drawMapPins = function (announcements) {
   mapPinsList.appendChild(fragment);
 };
 
-var getUniqueAnnouncementCard = function (announcement) {
+var createUniqueAnnouncementCard = function (announcement) {
   var cardElement = announcementCardTemplate.cloneNode(true);
   cardElement.querySelector('.popup__title').textContent = announcement.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = announcement.offer.address;
@@ -214,10 +227,8 @@ var getUniqueAnnouncementCard = function (announcement) {
   var offerPhotos = cardElement.querySelector('.popup__photos');
   var offerPhoto = offerPhotos.querySelector('.popup__photo');
   for (var j = 0; j < announcement.offer.photos.length; j++) {
-    var photo = createElement('img', 'popup__photo');
+    var photo = offerPhoto.cloneNode(false);
     photo.src = announcement.offer.photos[j];
-    photo.width = offerPhoto.width;
-    photo.height = offerPhoto.height;
     fragment.appendChild(photo);
   }
   offerPhotos.innerHTML = '';
@@ -228,26 +239,25 @@ var getUniqueAnnouncementCard = function (announcement) {
   map.insertBefore(cardElement, mapFiltersContainer);
 };
 
-// вызовы функций
+// var hideEmptyCardBlocks = function (announcement) {
+//   if (announcement.author.avatar.length === 0) {
+//     announcement.author.avatar
+//   }
+// };
 
-init();
+// объявления обработчиков
 
-// РАСПРЕДЕЛИТЬ КОД
+var windowLoadHandler = function () {
+  init();
+};
 
-mapPinControl.addEventListener('mousedown', function (evt) {
-  if (evt.button === 0) {
-    setActivePageStatus();
-  }
-});
+// событие загрузки страницы - код вне функций
 
-mapPinControl.addEventListener('keydown', function (evt) {
-  if (evt.key === 'Enter') {
-    setActivePageStatus();
-  }
-});
+window.addEventListener('load', windowLoadHandler);
 
 // for (var field of announcementFormFieldsets) {
 //   console.log(field);
 // }; не работает
 
-// Если данных для заполнения не хватает, соответствующий блок в карточке скрывается
+// Если данных для заполнения не хватает, соответствующий блок в карточке скрывается: проверять длину элементов,
+//   напр. announcement.offer.photo.length и если > 0, то рисую, а если нет, то remove
