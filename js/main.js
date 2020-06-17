@@ -17,6 +17,13 @@ var typesOfAccommodation = {
   'bungalo': 'Бунгало'
 };
 
+var minPricesOfAccommodation = {
+  'palace': '10000',
+  'flat': '1000',
+  'house': '5000',
+  'bungalo': '0'
+};
+
 var TYPES = Object.keys(typesOfAccommodation);
 
 var MapPinControlSizes = { // перепроверить
@@ -47,6 +54,8 @@ var mapFiltersForm = document.querySelector('.map__filters');
 var mapFilters = mapFiltersForm.children;
 var mapPinControl = document.querySelector('.map__pin--main');
 var addressInput = document.querySelector('input[name="address"]');
+var typeOfAccommodation = document.querySelector('#type');
+var priceOfAccommodation = document.querySelector('#price');
 
 // объявления функций
 
@@ -239,12 +248,6 @@ var createUniqueAnnouncementCard = function (announcement) {
   map.insertBefore(cardElement, mapFiltersContainer);
 };
 
-// var hideEmptyCardBlocks = function (announcement) {
-//   if (announcement.author.avatar.length === 0) {
-//     announcement.author.avatar
-//   }
-// };
-
 // объявления обработчиков
 
 var windowLoadHandler = function () {
@@ -255,9 +258,21 @@ var windowLoadHandler = function () {
 
 window.addEventListener('load', windowLoadHandler);
 
+typeOfAccommodation.addEventListener('change', function() {
+  priceOfAccommodation.min = minPricesOfAccommodation[typeOfAccommodation.value];
+});
+
 // for (var field of announcementFormFieldsets) {
 //   console.log(field);
 // }; не работает
 
 // Если данных для заполнения не хватает, соответствующий блок в карточке скрывается: проверять длину элементов,
 //   напр. announcement.offer.photo.length и если > 0, то рисую, а если нет, то remove
+
+// var hideEmptyCardBlocks = function (announcement) {
+//   if (announcement.author.avatar.length === 0) {
+//     announcement.author.avatar
+//   }
+// };
+
+// accept="image/png, image/jpeg" нужен для аватара и фото жилья?
