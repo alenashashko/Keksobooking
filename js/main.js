@@ -9,6 +9,7 @@ var CHARACTERISTICS = ['красивые', 'виды', 'уютные', 'комн
   'прекрасные', 'атмосферные', 'удобства', 'недорогие', 'новые'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var MOUSE_LEFT_BUTTON = 0;
 
 var typesOfAccommodation = {
   'palace': 'Дворец',
@@ -17,6 +18,8 @@ var typesOfAccommodation = {
   'bungalo': 'Бунгало'
 };
 
+var TYPES = Object.keys(typesOfAccommodation);
+
 var minPricesOfAccommodation = {
   'palace': '10000',
   'flat': '1000',
@@ -24,9 +27,7 @@ var minPricesOfAccommodation = {
   'bungalo': '0'
 };
 
-var TYPES = Object.keys(typesOfAccommodation);
-
-var MapPinControlSizes = { // ?
+var MapPinControlSizes = {
   WIDTH: 65,
   HEIGHT: 84
 };
@@ -53,35 +54,37 @@ var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
 var mapFiltersForm = document.querySelector('.map__filters');
 var mapFilters = mapFiltersForm.children;
 var mapPinControl = document.querySelector('.map__pin--main');
-var addressInput = document.querySelector('input[name="address"]');
+var titleInput = document.querySelector('#title');
+var addressInput = document.querySelector('#address');
 var typeOfAccommodation = document.querySelector('#type');
 var priceOfAccommodation = document.querySelector('#price');
+var numberOfRooms = document.querySelector('#room_number');
+var numberOfGuests = document.querySelector('#capacity');
+
+var MIN_TITLE_LENGTH = titleInput.minLength;
+var MAX_TITLE_LENGTH = titleInput.maxLength;
 
 // объявления функций
 
 var init = function () {
   var announcements = getAnnouncementsArray();
 
-  mapPinControl.addEventListener('mousedown', function (evt) {
-    if (evt.button === 0) {
-      setActivePageStatus();
-    }
-  });
-
-  mapPinControl.addEventListener('keydown', function (evt) {
-    if (evt.key === 'Enter') {
-      setActivePageStatus();
-    }
-  });
+  mapPinControl.addEventListener('mousedown', mapPinControlMouseDownHandler);
+  mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
+  titleInput.addEventListener('input', titleInputChangeHandler); // перескакивает на другое поле после 30 символов
+  typeOfAccommodation.addEventListener('change', typeOfAccommodationChangeHandler);
+  numberOfGuests.addEventListener('change', numberOfGuestsChangeHandler);
+  numberOfRooms.addEventListener('change', numberOfRoomsChangeHandler);
 
   setInactivePageStatus();
   drawMapPins(announcements);
   createUniqueAnnouncementCard(announcements[0]);
-
+  validateMinPrice();
+  validateGuestsCount();
 };
 
 var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
-  var randomNumber = Math.round(minRandomNumber + Math.random() * (maxRandomNumber - minRandomNumber));
+  var randomNumber = Math.floor(minRandomNumber + Math.random() * (maxRandomNumber - minRandomNumber + 1));
   return randomNumber;
 };
 
@@ -109,15 +112,9 @@ var getRandomDataFromArray = function (array, result) {
   }
 };
 
-var setDisabledElements = function (elements) {
+var setDisabledElements = function (elements, isDisabled) {
   for (var i = 0; i < elements.length; i++) {
-    elements[i].disabled = true;
-  }
-};
-
-var setActiveElements = function (elements) {
-  for (var i = 0; i < elements.length; i++) {
-    elements[i].disabled = false;
+    elements[i].disabled = isDisabled;
   }
 };
 
@@ -131,20 +128,20 @@ var setAddressValue = function (pageStatus) {
 };
 
 var setInactivePageStatus = function () { // setAddressValue('inactive'); вынести из этой функции в init?
-  setDisabledElements(announcementFormFieldsets);
-  setDisabledElements(mapFilters);
+  setDisabledElements(announcementFormFieldsets, true);
+  setDisabledElements(mapFilters, true);
   setAddressValue('inactive');
 };
 
 var setActivePageStatus = function () {
   map.classList.remove('map--faded');
   announcementForm.classList.remove('ad-form--disabled');
-  setActiveElements(announcementFormFieldsets);
-  setActiveElements(mapFilters);
+  setDisabledElements(announcementFormFieldsets, false);
+  setDisabledElements(mapFilters, false);
   setAddressValue('active'); // setAddressValue('active'); вынести из этой функции в обработчики клика и нажатия enter?
 };
 
-var createElement = function (tagName) { // называть с get обязательно, если возвращает значение? getNewElement
+var createElement = function (tagName) {
   var classNames = Array.prototype.slice.call(arguments, [0, 1]);
   var element = document.createElement(tagName);
   for (var i = 0; i < classNames.length; i++) {
@@ -248,24 +245,94 @@ var createUniqueAnnouncementCard = function (announcement) {
   map.insertBefore(cardElement, mapFiltersContainer);
 };
 
+var validateMinPrice = function () {
+  priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
+};
+
+var validateGuestsCount = function () {
+  switch (numberOfRooms.value) {
+    case '1':
+      if (!announcementForm.reportValidity() && numberOfGuests.value !== 1) { // на тернарный оператор ругался eslint
+        numberOfGuests.setCustomValidity('Можно разместить одного гостя');
+      } else {
+        numberOfGuests.setCustomValidity('');
+      }
+      break;
+
+    case '2':
+      if (!announcementForm.reportValidity() && numberOfGuests.value !== 1 && numberOfGuests.value !== 2) {
+        numberOfGuests.setCustomValidity('Можно разместить одного либо двух гостей');
+      } else {
+        numberOfGuests.setCustomValidity('');
+      }
+      break;
+
+    case '3':
+      if (!announcementForm.reportValidity() && numberOfGuests.value !== 1 && numberOfGuests.value !== 2 && numberOfGuests.value !== 3) {
+        numberOfGuests.setCustomValidity('Можно разместить одного, двух либо трех гостей');
+      } else {
+        numberOfGuests.setCustomValidity('');
+      }
+      break;
+
+    case '100':
+      if (!announcementForm.reportValidity() && numberOfGuests.value !== 0) {
+        numberOfGuests.setCustomValidity('Не для гостей');
+      } else {
+        numberOfGuests.setCustomValidity('');
+      }
+      break;
+  }
+};
+
 // объявления обработчиков
 
 var windowLoadHandler = function () {
   init();
 };
 
+var mapPinControlMouseDownHandler = function (evt) {
+  if (evt.button === MOUSE_LEFT_BUTTON) {
+    setActivePageStatus();
+  }
+};
+
+var mapPinControlEnterPressHandler = function (evt) {
+  if (evt.key === 'Enter') {
+    setActivePageStatus();
+  }
+};
+
+var titleInputChangeHandler = function () {
+  var titleLength = titleInput.value.length;
+  if (!announcementForm.reportValidity() && titleLength < MIN_TITLE_LENGTH) {
+    titleInput.setCustomValidity('Заголовок должен состоять минимум из 30 символов. Введите ещё '
+      + (MIN_TITLE_LENGTH - titleLength) + ' симв.');
+  } else if (!announcementForm.reportValidity() && titleLength > MAX_TITLE_LENGTH) {
+    titleInput.setCustomValidity('Заголовок не должен превышать 100 символов. Удалите лишние '
+      + (titleLength - MAX_TITLE_LENGTH) + ' симв.');
+  } else if (titleInput.validity.valueMissing) {
+    titleInput.setCustomValidity('Обязательное поле');
+  } else {
+    titleInput.setCustomValidity('');
+  }
+};
+
+var typeOfAccommodationChangeHandler = function () {
+  validateMinPrice();
+};
+
+var numberOfGuestsChangeHandler = function () {
+  validateGuestsCount();
+};
+
+var numberOfRoomsChangeHandler = function () {
+  validateGuestsCount();
+};
+
 // остальной код
 
 window.addEventListener('load', windowLoadHandler);
-
-
-priceOfAccommodation.min = 1000; // в константу
-priceOfAccommodation.placeholder = 1000; // в константу
-typeOfAccommodation.addEventListener('change', function () {
-  var minPrice = minPricesOfAccommodation[typeOfAccommodation.value];
-  priceOfAccommodation.min = minPrice;
-  priceOfAccommodation.placeholder = minPrice;
-});
 
 // for (var field of announcementFormFieldsets) {
 //   console.log(field);
