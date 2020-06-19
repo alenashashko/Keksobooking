@@ -26,7 +26,7 @@ var minPricesOfAccommodation = {
 
 var TYPES = Object.keys(typesOfAccommodation);
 
-var MapPinControlSizes = { // перепроверить
+var MapPinControlSizes = { // ?
   WIDTH: 65,
   HEIGHT: 84
 };
@@ -144,7 +144,7 @@ var setActivePageStatus = function () {
   setAddressValue('active'); // setAddressValue('active'); вынести из этой функции в обработчики клика и нажатия enter?
 };
 
-var createElement = function (tagName) { // назвать с get обязательно, если возвращает значение? getNewElement
+var createElement = function (tagName) { // называть с get обязательно, если возвращает значение? getNewElement
   var classNames = Array.prototype.slice.call(arguments, [0, 1]);
   var element = document.createElement(tagName);
   for (var i = 0; i < classNames.length; i++) {
@@ -254,12 +254,17 @@ var windowLoadHandler = function () {
   init();
 };
 
-// событие загрузки страницы - код вне функций
+// остальной код
 
 window.addEventListener('load', windowLoadHandler);
 
-typeOfAccommodation.addEventListener('change', function() {
-  priceOfAccommodation.min = minPricesOfAccommodation[typeOfAccommodation.value];
+
+priceOfAccommodation.min = 1000; // в константу
+priceOfAccommodation.placeholder = 1000; // в константу
+typeOfAccommodation.addEventListener('change', function () {
+  var minPrice = minPricesOfAccommodation[typeOfAccommodation.value];
+  priceOfAccommodation.min = minPrice;
+  priceOfAccommodation.placeholder = minPrice;
 });
 
 // for (var field of announcementFormFieldsets) {
