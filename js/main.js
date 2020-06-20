@@ -54,28 +54,27 @@ var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
 var mapFiltersForm = document.querySelector('.map__filters');
 var mapFilters = mapFiltersForm.children;
 var mapPinControl = document.querySelector('.map__pin--main');
-var titleInput = document.querySelector('#title');
 var addressInput = document.querySelector('#address');
 var typeOfAccommodation = document.querySelector('#type');
 var priceOfAccommodation = document.querySelector('#price');
 var numberOfRooms = document.querySelector('#room_number');
 var numberOfGuests = document.querySelector('#capacity');
-
-var MIN_TITLE_LENGTH = titleInput.minLength;
-var MAX_TITLE_LENGTH = titleInput.maxLength;
-var MAX_PRICE_VALUE = priceOfAccommodation.max;
+var announcementFormReset = document.querySelector('.ad-form__reset');
 
 // объявления функций
 
 var init = function () {
+  var announcements = getAnnouncementsArray();
+
   mapPinControl.addEventListener('mousedown', mapPinControlMouseDownHandler);
   mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
-  titleInput.addEventListener('input', titleInputChangeHandler); // перескакивает на другое поле после 30 символов
   typeOfAccommodation.addEventListener('change', typeOfAccommodationChangeHandler);
   numberOfGuests.addEventListener('change', numberOfGuestsChangeHandler);
   numberOfRooms.addEventListener('change', numberOfRoomsChangeHandler);
 
-  setInactivePageStatus();
+  drawMapPins(announcements);
+  createUniqueAnnouncementCard(announcements[0]);
+  toggleActivePageStatus('inactive');
   validateMinPrice();
   validateGuestsCount();
 };
@@ -109,9 +108,16 @@ var getRandomDataFromArray = function (array, result) {
   }
 };
 
-var setDisabledElements = function (elements, isDisabled) {
+var toggleDisabledElementsAttribute = function (elements, isDisabled) {
   for (var i = 0; i < elements.length; i++) {
     elements[i].disabled = isDisabled;
+  }
+};
+
+var toggleDisplayElementsProperty = function (elements, isDisplayed) {
+  var displayValue = (isDisplayed) ? 'block' : 'none';
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].style.display = displayValue;
   }
 };
 
@@ -124,21 +130,28 @@ var setAddressValue = function (pageStatus) {
   Math.round(mapPinControlTopCoordinate + additionToTopCoordinate); // центра метки либо центра кружка метки?
 };
 
-var setInactivePageStatus = function () {
-  setDisabledElements(announcementFormFieldsets, true);
-  setDisabledElements(mapFilters, true);
-  setAddressValue('inactive');
-};
+var toggleActivePageStatus = function (pagestatus) {
+  // нужна помощь в упрощении функции. Возможно, стоит все же сделать 2 разные функции: setActivePageStatus и setInactivePageStatus
+  setAddressValue(pagestatus);
+  var mapPins = mapPinsList.querySelectorAll('.map__pin');
+  var mapAnnouncementPins = Array.prototype.slice.call(mapPins, [1]);
+  var announcementCard = document.querySelector('.map__card');
 
-var setActivePageStatus = function () {
-  var announcements = getAnnouncementsArray();
-  map.classList.remove('map--faded');
-  announcementForm.classList.remove('ad-form--disabled');
-  drawMapPins(announcements);
-  createUniqueAnnouncementCard(announcements[0]);
-  setDisabledElements(announcementFormFieldsets, false);
-  setDisabledElements(mapFilters, false);
-  setAddressValue('active');
+  if (pagestatus === 'active') {
+    toggleDisplayElementsProperty(mapAnnouncementPins, true);
+    toggleDisplayElementsProperty(announcementCard, true);
+    map.classList.remove('map--faded');
+    announcementForm.classList.remove('ad-form--disabled');
+    toggleDisabledElementsAttribute(announcementFormFieldsets, false);
+    toggleDisabledElementsAttribute(mapFilters, false);
+  } else {
+    toggleDisplayElementsProperty(mapAnnouncementPins, false);
+    toggleDisplayElementsProperty(announcementCard, false);
+    map.classList.add('map--faded'); // изначально этот класс и так есть в разметке и вторым он не дублируется
+    announcementForm.classList.add('ad-form--disabled'); // изначально этот класс и так есть в разметке и он не дублируется
+    toggleDisabledElementsAttribute(announcementFormFieldsets, true);
+    toggleDisabledElementsAttribute(mapFilters, true);
+  }
 };
 
 var createElement = function (tagName) {
@@ -252,7 +265,7 @@ var validateMinPrice = function () {
 var validateGuestsCount = function () {
   switch (numberOfRooms.value) {
     case '1':
-      if (!announcementForm.reportValidity() && numberOfGuests.value !== 1) { // на тернарный оператор ругался eslint
+      if (!announcementForm.reportValidity() && numberOfGuests.value !== 1) {
         numberOfGuests.setCustomValidity('Можно разместить одного гостя');
       } else {
         numberOfGuests.setCustomValidity('');
@@ -293,28 +306,13 @@ var windowLoadHandler = function () {
 
 var mapPinControlMouseDownHandler = function (evt) {
   if (evt.button === MOUSE_LEFT_BUTTON) {
-    setActivePageStatus();
+    toggleActivePageStatus('active');
   }
 };
 
 var mapPinControlEnterPressHandler = function (evt) {
   if (evt.key === 'Enter') {
-    setActivePageStatus();
-  }
-};
-
-var titleInputChangeHandler = function () {
-  var titleLength = titleInput.value.length;
-  if (!announcementForm.reportValidity() && titleLength < MIN_TITLE_LENGTH) {
-    titleInput.setCustomValidity('Заголовок должен состоять минимум из 30 символов. Введите ещё '
-      + (MIN_TITLE_LENGTH - titleLength) + ' симв.');
-  } else if (!announcementForm.reportValidity() && titleLength > MAX_TITLE_LENGTH) {
-    titleInput.setCustomValidity('Заголовок не должен превышать 100 символов. Удалите лишние '
-      + (titleLength - MAX_TITLE_LENGTH) + ' симв.');
-  } else if (titleInput.validity.valueMissing) {
-    titleInput.setCustomValidity('Обязательное поле');
-  } else {
-    titleInput.setCustomValidity('');
+    toggleActivePageStatus('active');
   }
 };
 
@@ -334,28 +332,9 @@ var numberOfRoomsChangeHandler = function () {
 
 window.addEventListener('load', windowLoadHandler);
 
-priceOfAccommodation.addEventListener('change', function () {
-  if (!announcementForm.reportValidity() && (priceOfAccommodation.value < priceOfAccommodation.min)) {
-    priceOfAccommodation.setCustomValidity('Минимально возможная цена составляет ' + priceOfAccommodation.min + ' руб. Добавьте ' + (priceOfAccommodation.min - priceOfAccommodation.value) + ' руб.');
-  } else if (!announcementForm.reportValidity() && (priceOfAccommodation.value > MAX_PRICE_VALUE)) {
-    priceOfAccommodation.setCustomValidity('Максимально возможная цена составляет ' + MAX_PRICE_VALUE + ' руб. Снизьте цену на ' + (priceOfAccommodation.value - MAX_PRICE_VALUE) + ' руб.'); // !!!!!!!!!!!!
-  } else if (!announcementForm.reportValidity() && priceOfAccommodation.validity.ValueMissing) {
-    priceOfAccommodation.setCustomValidity('Обязательное поле');
-  } else {
-    priceOfAccommodation.setCustomValidity('');
-  }
+announcementFormReset.addEventListener('click', function () {
+  toggleActivePageStatus();
 });
-
-// for (var field of announcementFormFieldsets) {
-//   console.log(field);
-// }; не работает
 
 // Если данных для заполнения не хватает, соответствующий блок в карточке скрывается: проверять длину элементов,
 //   напр. announcement.offer.photo.length и если > 0, то рисую, а если нет, то remove
-
-// var hideEmptyCardBlocks = function (announcement) {
-//   if (announcement.author.avatar.length === 0) {
-//     announcement.author.avatar
-//   }
-// };
-// accept="image/png, image/jpeg" нужен для аватара и фото жилья?
