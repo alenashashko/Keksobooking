@@ -63,12 +63,11 @@ var numberOfGuests = document.querySelector('#capacity');
 
 var MIN_TITLE_LENGTH = titleInput.minLength;
 var MAX_TITLE_LENGTH = titleInput.maxLength;
+var MAX_PRICE_VALUE = priceOfAccommodation.max;
 
 // объявления функций
 
 var init = function () {
-  var announcements = getAnnouncementsArray();
-
   mapPinControl.addEventListener('mousedown', mapPinControlMouseDownHandler);
   mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
   titleInput.addEventListener('input', titleInputChangeHandler); // перескакивает на другое поле после 30 символов
@@ -77,8 +76,6 @@ var init = function () {
   numberOfRooms.addEventListener('change', numberOfRoomsChangeHandler);
 
   setInactivePageStatus();
-  drawMapPins(announcements);
-  createUniqueAnnouncementCard(announcements[0]);
   validateMinPrice();
   validateGuestsCount();
 };
@@ -127,18 +124,21 @@ var setAddressValue = function (pageStatus) {
   Math.round(mapPinControlTopCoordinate + additionToTopCoordinate); // центра метки либо центра кружка метки?
 };
 
-var setInactivePageStatus = function () { // setAddressValue('inactive'); вынести из этой функции в init?
+var setInactivePageStatus = function () {
   setDisabledElements(announcementFormFieldsets, true);
   setDisabledElements(mapFilters, true);
   setAddressValue('inactive');
 };
 
 var setActivePageStatus = function () {
+  var announcements = getAnnouncementsArray();
   map.classList.remove('map--faded');
   announcementForm.classList.remove('ad-form--disabled');
+  drawMapPins(announcements);
+  createUniqueAnnouncementCard(announcements[0]);
   setDisabledElements(announcementFormFieldsets, false);
   setDisabledElements(mapFilters, false);
-  setAddressValue('active'); // setAddressValue('active'); вынести из этой функции в обработчики клика и нажатия enter?
+  setAddressValue('active');
 };
 
 var createElement = function (tagName) {
@@ -334,6 +334,18 @@ var numberOfRoomsChangeHandler = function () {
 
 window.addEventListener('load', windowLoadHandler);
 
+priceOfAccommodation.addEventListener('change', function () {
+  if (!announcementForm.reportValidity() && (priceOfAccommodation.value < priceOfAccommodation.min)) {
+    priceOfAccommodation.setCustomValidity('Минимально возможная цена составляет ' + priceOfAccommodation.min + ' руб. Добавьте ' + (priceOfAccommodation.min - priceOfAccommodation.value) + ' руб.');
+  } else if (!announcementForm.reportValidity() && (priceOfAccommodation.value > MAX_PRICE_VALUE)) {
+    priceOfAccommodation.setCustomValidity('Максимально возможная цена составляет ' + MAX_PRICE_VALUE + ' руб. Снизьте цену на ' + (priceOfAccommodation.value - MAX_PRICE_VALUE) + ' руб.'); // !!!!!!!!!!!!
+  } else if (!announcementForm.reportValidity() && priceOfAccommodation.validity.ValueMissing) {
+    priceOfAccommodation.setCustomValidity('Обязательное поле');
+  } else {
+    priceOfAccommodation.setCustomValidity('');
+  }
+});
+
 // for (var field of announcementFormFieldsets) {
 //   console.log(field);
 // }; не работает
@@ -346,5 +358,4 @@ window.addEventListener('load', windowLoadHandler);
 //     announcement.author.avatar
 //   }
 // };
-
 // accept="image/png, image/jpeg" нужен для аватара и фото жилья?
