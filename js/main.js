@@ -338,7 +338,3 @@ var announcementFormResetClickHandler = function () {
 
 window.addEventListener('load', windowLoadHandler);
 
-// announcementForm.addEventListener('invalid', function (evt) {
-//   console.log(evt.target);
-//   evt.target.style.border = '10px solid black';
-// });
