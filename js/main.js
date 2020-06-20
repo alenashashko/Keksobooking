@@ -29,7 +29,8 @@ var minPricesOfAccommodation = {
 
 var MapPinControlSizes = {
   WIDTH: 65,
-  HEIGHT: 84
+  HEIGHT: 62,
+  POINTER_HEIGHT: 22
 };
 
 var MapPinSizes = {
@@ -59,6 +60,8 @@ var typeOfAccommodation = document.querySelector('#type');
 var priceOfAccommodation = document.querySelector('#price');
 var numberOfRooms = document.querySelector('#room_number');
 var numberOfGuests = document.querySelector('#capacity');
+var timeIn = document.querySelector('#timein');
+var timeOut = document.querySelector('#timeout');
 var announcementFormReset = document.querySelector('.ad-form__reset');
 
 // объявления функций
@@ -71,6 +74,9 @@ var init = function () {
   typeOfAccommodation.addEventListener('change', typeOfAccommodationChangeHandler);
   numberOfGuests.addEventListener('change', numberOfGuestsChangeHandler);
   numberOfRooms.addEventListener('change', numberOfRoomsChangeHandler);
+  timeIn.addEventListener('change', timeInChangeHandler);
+  timeOut.addEventListener('change', timeOutChangeHandler);
+  announcementFormReset.addEventListener('click', announcementFormResetClickHandler);
 
   drawMapPins(announcements);
   createUniqueAnnouncementCard(announcements[0]);
@@ -125,9 +131,10 @@ var setAddressValue = function (pageStatus) {
   var mapPinControlLeftCoordinate = parseInt(mapPinControl.style.left, 10);
   var mapPinControlTopCoordinate = parseInt(mapPinControl.style.top, 10);
   var additionToLeftCoordinate = MapPinControlSizes.WIDTH / 2;
-  var additionToTopCoordinate = (pageStatus === 'active') ? MapPinControlSizes.HEIGHT : MapPinControlSizes.HEIGHT / 2;
+  var additionToTopCoordinate = (pageStatus === 'active') ? (MapPinControlSizes.HEIGHT + MapPinControlSizes.POINTER_HEIGHT) :
+    MapPinControlSizes.HEIGHT / 2;
   addressInput.value = Math.round(mapPinControlLeftCoordinate + additionToLeftCoordinate) + ', ' +
-  Math.round(mapPinControlTopCoordinate + additionToTopCoordinate); // центра метки либо центра кружка метки?
+  Math.round(mapPinControlTopCoordinate + additionToTopCoordinate);
 };
 
 var toggleActivePageStatus = function (pagestatus) {
@@ -146,9 +153,9 @@ var toggleActivePageStatus = function (pagestatus) {
     toggleDisabledElementsAttribute(mapFilters, false);
   } else {
     toggleDisplayElementsProperty(mapAnnouncementPins, false);
-    toggleDisplayElementsProperty(announcementCard, false);
-    map.classList.add('map--faded'); // изначально этот класс и так есть в разметке и вторым он не дублируется
-    announcementForm.classList.add('ad-form--disabled'); // изначально этот класс и так есть в разметке и он не дублируется
+    toggleDisplayElementsProperty(announcementCard, false); // но вызывается по клику
+    map.classList.add('map--faded');
+    announcementForm.classList.add('ad-form--disabled');
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
   }
@@ -234,24 +241,37 @@ var createUniqueAnnouncementCard = function (announcement) {
 
   var offerFeatures = cardElement.querySelector('.popup__features');
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < announcement.offer.features.length; i++) {
-    var feature = createElement('li', 'popup__feature', 'popup__feature--' + announcement.offer.features[i]);
-    fragment.appendChild(feature);
+  if (announcement.offer.features.length > 0) {
+    for (var i = 0; i < announcement.offer.features.length; i++) {
+      var feature = createElement('li', 'popup__feature', 'popup__feature--' + announcement.offer.features[i]);
+      fragment.appendChild(feature);
+    }
+    offerFeatures.innerHTML = '';
+    offerFeatures.appendChild(fragment);
+  } else {
+    offerFeatures.remove();
   }
-  offerFeatures.innerHTML = '';
-  offerFeatures.appendChild(fragment);
 
-  cardElement.querySelector('.popup__description').textContent = announcement.offer.description;
+  var offerDescription = cardElement.querySelector('.popup__description');
+  if (announcement.offer.description.length > 0) { // после прихода данных с сервера посм, может ли не быть описания в карточке
+    offerDescription.textContent = announcement.offer.description;
+  } else {
+    offerDescription.remove();
+  }
 
   var offerPhotos = cardElement.querySelector('.popup__photos');
   var offerPhoto = offerPhotos.querySelector('.popup__photo');
-  for (var j = 0; j < announcement.offer.photos.length; j++) {
-    var photo = offerPhoto.cloneNode(false);
-    photo.src = announcement.offer.photos[j];
-    fragment.appendChild(photo);
+  if (announcement.offer.photos.length > 0) {
+    for (var j = 0; j < announcement.offer.photos.length; j++) {
+      var photo = offerPhoto.cloneNode(false);
+      photo.src = announcement.offer.photos[j];
+      fragment.appendChild(photo);
+    }
+    offerPhotos.innerHTML = '';
+    offerPhotos.appendChild(fragment);
+  } else {
+    offerPhotos.remove();
   }
-  offerPhotos.innerHTML = '';
-  offerPhotos.appendChild(fragment);
 
   cardElement.querySelector('.popup__avatar').src = announcement.author.avatar;
 
@@ -263,38 +283,12 @@ var validateMinPrice = function () {
 };
 
 var validateGuestsCount = function () {
-  switch (numberOfRooms.value) {
-    case '1':
-      if (!announcementForm.reportValidity() && numberOfGuests.value !== 1) {
-        numberOfGuests.setCustomValidity('Можно разместить одного гостя');
-      } else {
-        numberOfGuests.setCustomValidity('');
-      }
-      break;
-
-    case '2':
-      if (!announcementForm.reportValidity() && numberOfGuests.value !== 1 && numberOfGuests.value !== 2) {
-        numberOfGuests.setCustomValidity('Можно разместить одного либо двух гостей');
-      } else {
-        numberOfGuests.setCustomValidity('');
-      }
-      break;
-
-    case '3':
-      if (!announcementForm.reportValidity() && numberOfGuests.value !== 1 && numberOfGuests.value !== 2 && numberOfGuests.value !== 3) {
-        numberOfGuests.setCustomValidity('Можно разместить одного, двух либо трех гостей');
-      } else {
-        numberOfGuests.setCustomValidity('');
-      }
-      break;
-
-    case '100':
-      if (!announcementForm.reportValidity() && numberOfGuests.value !== 0) {
-        numberOfGuests.setCustomValidity('Не для гостей');
-      } else {
-        numberOfGuests.setCustomValidity('');
-      }
-      break;
+  if ((+numberOfRooms.value >= +numberOfGuests.value) && +numberOfRooms.value !== 100 && +numberOfGuests.value !== 0) {
+    numberOfGuests.setCustomValidity('');
+  } else if (+numberOfRooms.value === 100 && +numberOfGuests.value === 0) {
+    numberOfGuests.setCustomValidity('');
+  } else {
+    numberOfGuests.setCustomValidity('Количество комнат не соответствует количеству гостей');
   }
 };
 
@@ -328,13 +322,23 @@ var numberOfRoomsChangeHandler = function () {
   validateGuestsCount();
 };
 
+var timeInChangeHandler = function () {
+  timeOut.value = timeIn.value;
+};
+
+var timeOutChangeHandler = function () {
+  timeIn.value = timeOut.value;
+};
+
+var announcementFormResetClickHandler = function () {
+  toggleActivePageStatus();
+};
+
 // остальной код
 
 window.addEventListener('load', windowLoadHandler);
 
-announcementFormReset.addEventListener('click', function () {
-  toggleActivePageStatus();
-});
-
-// Если данных для заполнения не хватает, соответствующий блок в карточке скрывается: проверять длину элементов,
-//   напр. announcement.offer.photo.length и если > 0, то рисую, а если нет, то remove
+// announcementForm.addEventListener('invalid', function (evt) {
+//   console.log(evt.target);
+//   evt.target.style.border = '10px solid black';
+// });
