@@ -120,8 +120,10 @@ var toggleDisabledElementsAttribute = function (elements, isDisabled) {
 };
 
 var toggleDisplayElementsProperty = function (elements, isDisplayed) {
+  console.log(typeof elements);
   var displayValue = (isDisplayed) ? 'block' : 'none';
   for (var i = 0; i < elements.length; i++) {
+    console.log(displayValue);
     elements[i].style.display = displayValue;
   }
 };
@@ -145,17 +147,14 @@ var toggleActivePageStatus = function (pagestatus) {
 
   if (pagestatus === 'active') {
     toggleDisplayElementsProperty(mapAnnouncementPins, true);
-    if (announcementCard) {
-    toggleDisplayElementsProperty(announcementCard, true);
-    }
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
     toggleDisabledElementsAttribute(mapFilters, false);
   } else {
     toggleDisplayElementsProperty(mapAnnouncementPins, false);
-    if (announcementCard) {
-      toggleDisplayElementsProperty(announcementCard, false);
+    if (announcementCard) {  // убирает карточку, если она открыта
+      announcementCard.remove();
     }
     map.classList.add('map--faded');
     announcementForm.classList.add('ad-form--disabled');
@@ -345,7 +344,7 @@ var timeOutChangeHandler = function () {
 };
 
 var announcementFormResetClickHandler = function () {
-  toggleActivePageStatus();
+  toggleActivePageStatus('inactive');
 };
 
 // остальной код
