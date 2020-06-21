@@ -79,7 +79,6 @@ var init = function () {
   announcementFormReset.addEventListener('click', announcementFormResetClickHandler);
 
   drawMapPins(announcements);
-  createUniqueAnnouncementCard(announcements[0]);
   toggleActivePageStatus('inactive');
   validateMinPrice();
   validateGuestsCount();
@@ -146,14 +145,18 @@ var toggleActivePageStatus = function (pagestatus) {
 
   if (pagestatus === 'active') {
     toggleDisplayElementsProperty(mapAnnouncementPins, true);
+    if (announcementCard) {
     toggleDisplayElementsProperty(announcementCard, true);
+    }
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
     toggleDisabledElementsAttribute(mapFilters, false);
   } else {
     toggleDisplayElementsProperty(mapAnnouncementPins, false);
-    toggleDisplayElementsProperty(announcementCard, false); // но вызывается по клику
+    if (announcementCard) {
+      toggleDisplayElementsProperty(announcementCard, false);
+    }
     map.classList.add('map--faded');
     announcementForm.classList.add('ad-form--disabled');
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
@@ -216,10 +219,21 @@ var getUniqueMapPin = function (announcement) {
   return pinElement;
 };
 
+var pinClickListenerCreator = function (element, announcement) {  //можно так назвать функцию?
+  element.addEventListener('click', function () {
+    var openedCards = document.querySelectorAll('.map__card');
+    for (var i = 0; i < openedCards.length; i++) {
+      openedCards[i].remove();
+    }
+    createUniqueAnnouncementCard(announcement);
+  })
+}
+
 var drawMapPins = function (announcements) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < announcements.length; i++) {
     var uniqueMapPin = getUniqueMapPin(announcements[i]);
+    pinClickListenerCreator(uniqueMapPin, announcements[i]);
     fragment.appendChild(uniqueMapPin);
   }
   mapPinsList.appendChild(fragment);
