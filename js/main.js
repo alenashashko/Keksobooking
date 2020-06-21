@@ -120,10 +120,8 @@ var toggleDisabledElementsAttribute = function (elements, isDisabled) {
 };
 
 var toggleDisplayElementsProperty = function (elements, isDisplayed) {
-  console.log(typeof elements);
   var displayValue = (isDisplayed) ? 'block' : 'none';
   for (var i = 0; i < elements.length; i++) {
-    console.log(displayValue);
     elements[i].style.display = displayValue;
   }
 };
@@ -153,8 +151,8 @@ var toggleActivePageStatus = function (pagestatus) {
     toggleDisabledElementsAttribute(mapFilters, false);
   } else {
     toggleDisplayElementsProperty(mapAnnouncementPins, false);
-    if (announcementCard) {  // убирает карточку, если она открыта
-      announcementCard.remove();
+    if (announcementCard) { 
+      closeCard();
     }
     map.classList.add('map--faded');
     announcementForm.classList.add('ad-form--disabled');
@@ -224,7 +222,7 @@ var pinClickListenerCreator = function (element, announcement) {  //можно �
     for (var i = 0; i < openedCards.length; i++) {
       openedCards[i].remove();
     }
-    createUniqueAnnouncementCard(announcement);
+    openCard(announcement);
   })
 }
 
@@ -291,6 +289,22 @@ var createUniqueAnnouncementCard = function (announcement) {
   map.insertBefore(cardElement, mapFiltersContainer);
 };
 
+var openCard = function (announcement) {
+  createUniqueAnnouncementCard(announcement);
+  document.addEventListener('keydown', openedCardEscPressHandler)
+  var cardCLoseButton = document.querySelector('.popup__close');
+  cardCLoseButton.addEventListener('click', function() {
+    closeCard();
+  });
+};
+
+var closeCard = function () {
+var openedCard = document.querySelector('.map__card');
+openedCard.remove();
+
+document.removeEventListener('keydown', openedCardEscPressHandler)
+};
+
 var validateMinPrice = function () {
   priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
 };
@@ -323,6 +337,13 @@ var mapPinControlEnterPressHandler = function (evt) {
   }
 };
 
+var openedCardEscPressHandler = function(evt) {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    closeCard();
+  }
+}
+
 var typeOfAccommodationChangeHandler = function () {
   validateMinPrice();
 };
@@ -350,4 +371,3 @@ var announcementFormResetClickHandler = function () {
 // остальной код
 
 window.addEventListener('load', windowLoadHandler);
-
