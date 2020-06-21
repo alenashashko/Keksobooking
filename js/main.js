@@ -151,7 +151,7 @@ var toggleActivePageStatus = function (pagestatus) {
     toggleDisabledElementsAttribute(mapFilters, false);
   } else {
     toggleDisplayElementsProperty(mapAnnouncementPins, false);
-    if (announcementCard) { 
+    if (announcementCard) {
       closeCard();
     }
     map.classList.add('map--faded');
@@ -216,15 +216,15 @@ var getUniqueMapPin = function (announcement) {
   return pinElement;
 };
 
-var pinClickListenerCreator = function (element, announcement) {  //можно так назвать функцию?
+var pinClickListenerCreator = function (element, announcement) { // можно так назвать функцию?
   element.addEventListener('click', function () {
     var openedCards = document.querySelectorAll('.map__card');
     for (var i = 0; i < openedCards.length; i++) {
       openedCards[i].remove();
     }
     openCard(announcement);
-  })
-}
+  });
+};
 
 var drawMapPins = function (announcements) {
   var fragment = document.createDocumentFragment();
@@ -291,18 +291,18 @@ var createUniqueAnnouncementCard = function (announcement) {
 
 var openCard = function (announcement) {
   createUniqueAnnouncementCard(announcement);
-  document.addEventListener('keydown', openedCardEscPressHandler)
+  document.addEventListener('keydown', openedCardEscPressHandler);
   var cardCLoseButton = document.querySelector('.popup__close');
-  cardCLoseButton.addEventListener('click', function() {
+  cardCLoseButton.addEventListener('click', function () {
     closeCard();
   });
 };
 
 var closeCard = function () {
-var openedCard = document.querySelector('.map__card');
-openedCard.remove();
+  var openedCard = document.querySelector('.map__card');
+  openedCard.remove();
 
-document.removeEventListener('keydown', openedCardEscPressHandler)
+  document.removeEventListener('keydown', openedCardEscPressHandler);
 };
 
 var validateMinPrice = function () {
@@ -337,12 +337,12 @@ var mapPinControlEnterPressHandler = function (evt) {
   }
 };
 
-var openedCardEscPressHandler = function(evt) {
+var openedCardEscPressHandler = function (evt) {
   if (evt.key === 'Escape') {
     evt.preventDefault();
     closeCard();
   }
-}
+};
 
 var typeOfAccommodationChangeHandler = function () {
   validateMinPrice();
