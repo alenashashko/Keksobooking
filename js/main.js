@@ -63,26 +63,9 @@ var numberOfGuests = document.querySelector('#capacity');
 var timeIn = document.querySelector('#timein');
 var timeOut = document.querySelector('#timeout');
 var announcementFormReset = document.querySelector('.ad-form__reset');
+var announcementCard;
 
 // объявления функций
-
-var init = function () {
-  var announcements = getAnnouncementsArray();
-
-  mapPinControl.addEventListener('mousedown', mapPinControlMouseDownHandler);
-  mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
-  typeOfAccommodation.addEventListener('change', typeOfAccommodationChangeHandler);
-  numberOfGuests.addEventListener('change', numberOfGuestsChangeHandler);
-  numberOfRooms.addEventListener('change', numberOfRoomsChangeHandler);
-  timeIn.addEventListener('change', timeInChangeHandler);
-  timeOut.addEventListener('change', timeOutChangeHandler);
-  announcementFormReset.addEventListener('click', announcementFormResetClickHandler);
-
-  drawMapPins(announcements);
-  toggleActivePageStatus('inactive');
-  validateMinPrice();
-  validateGuestsCount();
-};
 
 var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
   var randomNumber = Math.floor(minRandomNumber + Math.random() * (maxRandomNumber - minRandomNumber + 1));
@@ -119,13 +102,6 @@ var toggleDisabledElementsAttribute = function (elements, isDisabled) {
   }
 };
 
-var toggleDisplayElementsProperty = function (elements, isDisplayed) {
-  var displayValue = (isDisplayed) ? 'block' : 'none';
-  for (var i = 0; i < elements.length; i++) {
-    elements[i].style.display = displayValue;
-  }
-};
-
 var setAddressValue = function (pageStatus) {
   var mapPinControlLeftCoordinate = parseInt(mapPinControl.style.left, 10);
   var mapPinControlTopCoordinate = parseInt(mapPinControl.style.top, 10);
@@ -136,29 +112,28 @@ var setAddressValue = function (pageStatus) {
   Math.round(mapPinControlTopCoordinate + additionToTopCoordinate);
 };
 
-var toggleActivePageStatus = function (pagestatus) {
-  // нужна помощь в упрощении функции. Возможно, стоит все же сделать 2 разные функции: setActivePageStatus и setInactivePageStatus
-  setAddressValue(pagestatus);
-  var mapPins = mapPinsList.querySelectorAll('.map__pin');
-  var mapAnnouncementPins = Array.prototype.slice.call(mapPins, [1]);
-  var announcementCard = document.querySelector('.map__card');
+var setActivePageStatus = function () {
+  var announcements = getAnnouncementsArray();
+  map.classList.remove('map--faded');
+  announcementForm.classList.remove('ad-form--disabled');
+  drawMapPins(announcements);
+  setAddressValue('active');
+  toggleDisabledElementsAttribute(announcementFormFieldsets, false);
+  toggleDisabledElementsAttribute(mapFilters, false);
+};
 
-  if (pagestatus === 'active') {
-    toggleDisplayElementsProperty(mapAnnouncementPins, true);
-    map.classList.remove('map--faded');
-    announcementForm.classList.remove('ad-form--disabled');
-    toggleDisabledElementsAttribute(announcementFormFieldsets, false);
-    toggleDisabledElementsAttribute(mapFilters, false);
-  } else {
-    toggleDisplayElementsProperty(mapAnnouncementPins, false);
-    if (announcementCard) {
-      closeCard();
-    }
-    map.classList.add('map--faded');
-    announcementForm.classList.add('ad-form--disabled');
-    toggleDisabledElementsAttribute(announcementFormFieldsets, true);
-    toggleDisabledElementsAttribute(mapFilters, true);
+var setInactivePageStatus = function () {
+  var pinsList = document.querySelector('.map__pins'); // вот тут удаление можно сделать лучше как-то?
+  var mapPins = pinsList.querySelectorAll('button:not(.map__pin--main)');
+  map.classList.add('map--faded');
+  announcementForm.classList.add('ad-form--disabled');
+  setAddressValue('inactive');
+  for (var i = 0; i < mapPins.length; i++) {
+    mapPins[i].remove();
   }
+  closeCard();
+  toggleDisabledElementsAttribute(announcementFormFieldsets, true);
+  toggleDisabledElementsAttribute(mapFilters, true);
 };
 
 var createElement = function (tagName) {
@@ -213,24 +188,18 @@ var getUniqueMapPin = function (announcement) {
   var mapPinImage = pinElement.querySelector('img');
   mapPinImage.src = announcement.author.avatar;
   mapPinImage.alt = announcement.offer.title;
-  return pinElement;
-};
 
-var pinClickListenerCreator = function (element, announcement) { // можно так назвать функцию?
-  element.addEventListener('click', function () {
-    var openedCards = document.querySelectorAll('.map__card');
-    for (var i = 0; i < openedCards.length; i++) {
-      openedCards[i].remove();
-    }
+  pinElement.addEventListener('click', function () {
+    closeCard();
     openCard(announcement);
   });
+  return pinElement;
 };
 
 var drawMapPins = function (announcements) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < announcements.length; i++) {
     var uniqueMapPin = getUniqueMapPin(announcements[i]);
-    pinClickListenerCreator(uniqueMapPin, announcements[i]);
     fragment.appendChild(uniqueMapPin);
   }
   mapPinsList.appendChild(fragment);
@@ -286,6 +255,7 @@ var createUniqueAnnouncementCard = function (announcement) {
 
   cardElement.querySelector('.popup__avatar').src = announcement.author.avatar;
 
+  announcementCard = cardElement;
   map.insertBefore(cardElement, mapFiltersContainer);
 };
 
@@ -299,8 +269,10 @@ var openCard = function (announcement) {
 };
 
 var closeCard = function () {
-  var openedCard = document.querySelector('.map__card');
-  openedCard.remove();
+  if (announcementCard) {
+    announcementCard.remove();
+    announcementCard = null;
+  }
 
   document.removeEventListener('keydown', openedCardEscPressHandler);
 };
@@ -309,7 +281,7 @@ var validateMinPrice = function () {
   priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
 };
 
-var validateGuestsCount = function () {
+var validateGuestsCount = function () { // переделать
   if ((+numberOfRooms.value >= +numberOfGuests.value) && +numberOfRooms.value !== 100 && +numberOfGuests.value !== 0) {
     numberOfGuests.setCustomValidity('');
   } else if (+numberOfRooms.value === 100 && +numberOfGuests.value === 0) {
@@ -322,19 +294,38 @@ var validateGuestsCount = function () {
 // объявления обработчиков
 
 var windowLoadHandler = function () {
-  init();
-};
+  mapPinControl.addEventListener('mousedown', function (evt) {
+    if (evt.button === MOUSE_LEFT_BUTTON) {
+      setActivePageStatus();
+    }
+  });
+  mapPinControl.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Enter') {
+      setActivePageStatus();
+    }
+  });
+  typeOfAccommodation.addEventListener('change', function () {
+    validateMinPrice();
+  });
+  numberOfGuests.addEventListener('change', function () {
+    validateGuestsCount();
+  });
+  numberOfRooms.addEventListener('change', function () {
+    validateGuestsCount();
+  });
+  timeIn.addEventListener('change', function () {
+    timeOut.value = timeIn.value;
+  });
+  timeOut.addEventListener('change', function () {
+    timeIn.value = timeOut.value;
+  });
+  announcementFormReset.addEventListener('click', function () {
+    setInactivePageStatus();
+  });
 
-var mapPinControlMouseDownHandler = function (evt) {
-  if (evt.button === MOUSE_LEFT_BUTTON) {
-    toggleActivePageStatus('active');
-  }
-};
-
-var mapPinControlEnterPressHandler = function (evt) {
-  if (evt.key === 'Enter') {
-    toggleActivePageStatus('active');
-  }
+  setInactivePageStatus();
+  validateMinPrice();
+  validateGuestsCount();
 };
 
 var openedCardEscPressHandler = function (evt) {
@@ -342,30 +333,6 @@ var openedCardEscPressHandler = function (evt) {
     evt.preventDefault();
     closeCard();
   }
-};
-
-var typeOfAccommodationChangeHandler = function () {
-  validateMinPrice();
-};
-
-var numberOfGuestsChangeHandler = function () {
-  validateGuestsCount();
-};
-
-var numberOfRoomsChangeHandler = function () {
-  validateGuestsCount();
-};
-
-var timeInChangeHandler = function () {
-  timeOut.value = timeIn.value;
-};
-
-var timeOutChangeHandler = function () {
-  timeIn.value = timeOut.value;
-};
-
-var announcementFormResetClickHandler = function () {
-  toggleActivePageStatus('inactive');
 };
 
 // остальной код
