@@ -1,5 +1,7 @@
 'use strict';
 
+// константы и перечисления
+
 var ANNOUNCEMENTS_AMOUNT = 8;
 var CHECKIN_AND_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
@@ -7,6 +9,7 @@ var CHARACTERISTICS = ['красивые', 'виды', 'уютные', 'комн
   'прекрасные', 'атмосферные', 'удобства', 'недорогие', 'новые'];
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var MOUSE_LEFT_BUTTON = 0;
 
 var typesOfAccommodation = {
   'palace': 'Дворец',
@@ -17,10 +20,25 @@ var typesOfAccommodation = {
 
 var TYPES = Object.keys(typesOfAccommodation);
 
+var minPricesOfAccommodation = {
+  'palace': '10000',
+  'flat': '1000',
+  'house': '5000',
+  'bungalo': '0'
+};
+
+var MapPinControlSizes = {
+  WIDTH: 65,
+  HEIGHT: 62,
+  POINTER_HEIGHT: 22
+};
+
 var MapPinSizes = {
   WIDTH: 50,
   HEIGHT: 70
 };
+
+// переменные
 
 var map = document.querySelector('.map');
 var mapOverlay = document.querySelector('.map__overlay');
@@ -31,19 +49,26 @@ var mapPinsList = document.querySelector('.map__pins');
 var announcementCardTemplate = document.querySelector('#card')
   .content
   .querySelector('.map__card');
-var mapFilters = document.querySelector('.map__filters-container');
+var mapFiltersContainer = document.querySelector('.map__filters-container');
+var announcementForm = document.querySelector('.ad-form');
+var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
+var mapFiltersForm = document.querySelector('.map__filters');
+var mapFilters = mapFiltersForm.children;
+var mapPinControl = document.querySelector('.map__pin--main');
+var addressInput = document.querySelector('#address');
+var typeOfAccommodation = document.querySelector('#type');
+var priceOfAccommodation = document.querySelector('#price');
+var numberOfRooms = document.querySelector('#room_number');
+var numberOfGuests = document.querySelector('#capacity');
+var timeIn = document.querySelector('#timein');
+var timeOut = document.querySelector('#timeout');
+var announcementFormReset = document.querySelector('.ad-form__reset');
+var announcementCard;
 
-
-var init = function () {
-  var announcements = getAnnouncementsArray();
-
-  map.classList.remove('map--faded'); // временное решение
-  drawMapPins(announcements);
-  getUniqueAnnouncementCard(announcements[0]);
-};
+// объявления функций
 
 var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
-  var randomNumber = Math.round(minRandomNumber + Math.random() * (maxRandomNumber - minRandomNumber));
+  var randomNumber = Math.floor(minRandomNumber + Math.random() * (maxRandomNumber - minRandomNumber + 1));
   return randomNumber;
 };
 
@@ -62,13 +87,53 @@ var getRandomDataFromArray = function (array, result) {
   var randomArray = getShuffledArray(array);
   if (result === 'array') {
     var i = getRandomNumber(1, randomArray.length);
-    randomArray.splice(i);
+    randomArray.splice(0, i);
     return randomArray;
   } else if (result === 'string') {
     return randomArray.slice(0, getRandomNumber(0, randomArray.length - 1)).join(' ');
   } else {
     return null;
   }
+};
+
+var toggleDisabledElementsAttribute = function (elements, isDisabled) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].disabled = isDisabled;
+  }
+};
+
+var setAddressValue = function (pageStatus) {
+  var mapPinControlLeftCoordinate = parseInt(mapPinControl.style.left, 10);
+  var mapPinControlTopCoordinate = parseInt(mapPinControl.style.top, 10);
+  var additionToLeftCoordinate = MapPinControlSizes.WIDTH / 2;
+  var additionToTopCoordinate = (pageStatus === 'active') ? (MapPinControlSizes.HEIGHT + MapPinControlSizes.POINTER_HEIGHT) :
+    MapPinControlSizes.HEIGHT / 2;
+  addressInput.value = Math.round(mapPinControlLeftCoordinate + additionToLeftCoordinate) + ', ' +
+  Math.round(mapPinControlTopCoordinate + additionToTopCoordinate);
+};
+
+var setActivePageStatus = function () {
+  var announcements = getAnnouncementsArray();
+  map.classList.remove('map--faded');
+  announcementForm.classList.remove('ad-form--disabled');
+  drawMapPins(announcements);
+  setAddressValue('active');
+  toggleDisabledElementsAttribute(announcementFormFieldsets, false);
+  toggleDisabledElementsAttribute(mapFilters, false);
+};
+
+var setInactivePageStatus = function () {
+  var pinsList = document.querySelector('.map__pins'); // вот тут удаление можно сделать лучше как-то?
+  var mapPins = pinsList.querySelectorAll('button:not(.map__pin--main)');
+  map.classList.add('map--faded');
+  announcementForm.classList.add('ad-form--disabled');
+  setAddressValue('inactive');
+  for (var i = 0; i < mapPins.length; i++) {
+    mapPins[i].remove();
+  }
+  closeCard();
+  toggleDisabledElementsAttribute(announcementFormFieldsets, true);
+  toggleDisabledElementsAttribute(mapFilters, true);
 };
 
 var createElement = function (tagName) {
@@ -123,6 +188,11 @@ var getUniqueMapPin = function (announcement) {
   var mapPinImage = pinElement.querySelector('img');
   mapPinImage.src = announcement.author.avatar;
   mapPinImage.alt = announcement.offer.title;
+
+  pinElement.addEventListener('click', function () {
+    closeCard();
+    openCard(announcement);
+  });
   return pinElement;
 };
 
@@ -135,7 +205,7 @@ var drawMapPins = function (announcements) {
   mapPinsList.appendChild(fragment);
 };
 
-var getUniqueAnnouncementCard = function (announcement) {
+var createUniqueAnnouncementCard = function (announcement) {
   var cardElement = announcementCardTemplate.cloneNode(true);
   cardElement.querySelector('.popup__title').textContent = announcement.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = announcement.offer.address;
@@ -151,32 +221,120 @@ var getUniqueAnnouncementCard = function (announcement) {
 
   var offerFeatures = cardElement.querySelector('.popup__features');
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < announcement.offer.features.length; i++) {
-    var feature = createElement('li', 'popup__feature', 'popup__feature--' + announcement.offer.features[i]);
-    fragment.appendChild(feature);
+  if (announcement.offer.features.length > 0) {
+    for (var i = 0; i < announcement.offer.features.length; i++) {
+      var feature = createElement('li', 'popup__feature', 'popup__feature--' + announcement.offer.features[i]);
+      fragment.appendChild(feature);
+    }
+    offerFeatures.innerHTML = '';
+    offerFeatures.appendChild(fragment);
+  } else {
+    offerFeatures.remove();
   }
-  offerFeatures.innerHTML = '';
-  offerFeatures.appendChild(fragment);
 
-  cardElement.querySelector('.popup__description').textContent = announcement.offer.description;
+  var offerDescription = cardElement.querySelector('.popup__description');
+  if (announcement.offer.description.length > 0) { // после прихода данных с сервера посм, может ли не быть описания в карточке
+    offerDescription.textContent = announcement.offer.description;
+  } else {
+    offerDescription.remove();
+  }
 
   var offerPhotos = cardElement.querySelector('.popup__photos');
   var offerPhoto = offerPhotos.querySelector('.popup__photo');
-  for (var j = 0; j < announcement.offer.photos.length; j++) {
-    var photo = createElement('img', 'popup__photo');
-    photo.src = announcement.offer.photos[j];
-    photo.width = offerPhoto.width;
-    photo.height = offerPhoto.height;
-    fragment.appendChild(photo);
+  if (announcement.offer.photos.length > 0) {
+    for (var j = 0; j < announcement.offer.photos.length; j++) {
+      var photo = offerPhoto.cloneNode(false);
+      photo.src = announcement.offer.photos[j];
+      fragment.appendChild(photo);
+    }
+    offerPhotos.innerHTML = '';
+    offerPhotos.appendChild(fragment);
+  } else {
+    offerPhotos.remove();
   }
-  offerPhotos.innerHTML = '';
-  offerPhotos.appendChild(fragment);
 
   cardElement.querySelector('.popup__avatar').src = announcement.author.avatar;
 
-  map.insertBefore(cardElement, mapFilters);
+  announcementCard = cardElement;
+  map.insertBefore(cardElement, mapFiltersContainer);
 };
 
-init();
+var openCard = function (announcement) {
+  createUniqueAnnouncementCard(announcement);
+  document.addEventListener('keydown', openedCardEscPressHandler);
+  var cardCLoseButton = document.querySelector('.popup__close');
+  cardCLoseButton.addEventListener('click', function () {
+    closeCard();
+  });
+};
 
-// Если данных для заполнения не хватает, соответствующий блок в карточке скрывается.
+var closeCard = function () {
+  if (announcementCard) {
+    announcementCard.remove();
+    announcementCard = null;
+  }
+
+  document.removeEventListener('keydown', openedCardEscPressHandler);
+};
+
+var validateMinPrice = function () {
+  priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
+};
+
+var validateGuestsCount = function () { // переделать
+  if ((+numberOfRooms.value >= +numberOfGuests.value) && +numberOfRooms.value !== 100 && +numberOfGuests.value !== 0) {
+    numberOfGuests.setCustomValidity('');
+  } else if (+numberOfRooms.value === 100 && +numberOfGuests.value === 0) {
+    numberOfGuests.setCustomValidity('');
+  } else {
+    numberOfGuests.setCustomValidity('Количество комнат не соответствует количеству гостей');
+  }
+};
+
+// объявления обработчиков
+
+var windowLoadHandler = function () {
+  mapPinControl.addEventListener('mousedown', function (evt) {
+    if (evt.button === MOUSE_LEFT_BUTTON) {
+      setActivePageStatus();
+    }
+  });
+  mapPinControl.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Enter') {
+      setActivePageStatus();
+    }
+  });
+  typeOfAccommodation.addEventListener('change', function () {
+    validateMinPrice();
+  });
+  numberOfGuests.addEventListener('change', function () {
+    validateGuestsCount();
+  });
+  numberOfRooms.addEventListener('change', function () {
+    validateGuestsCount();
+  });
+  timeIn.addEventListener('change', function () {
+    timeOut.value = timeIn.value;
+  });
+  timeOut.addEventListener('change', function () {
+    timeIn.value = timeOut.value;
+  });
+  announcementFormReset.addEventListener('click', function () {
+    setInactivePageStatus();
+  });
+
+  setInactivePageStatus();
+  validateMinPrice();
+  validateGuestsCount();
+};
+
+var openedCardEscPressHandler = function (evt) {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    closeCard();
+  }
+};
+
+// остальной код
+
+window.addEventListener('load', windowLoadHandler);
