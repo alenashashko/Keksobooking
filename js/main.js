@@ -123,8 +123,7 @@ var setActivePageStatus = function () {
 };
 
 var setInactivePageStatus = function () {
-  var pinsList = document.querySelector('.map__pins'); // вот тут удаление можно сделать лучше как-то?
-  var mapPins = pinsList.querySelectorAll('button:not(.map__pin--main)');
+  var mapPins = document.querySelectorAll('button.map__pin:not(.map__pin--main)');
   map.classList.add('map--faded');
   announcementForm.classList.add('ad-form--disabled');
   setAddressValue('inactive');
@@ -294,35 +293,6 @@ var validateGuestsCount = function () { // переделать
 // объявления обработчиков
 
 var windowLoadHandler = function () {
-  mapPinControl.addEventListener('mousedown', function (evt) {
-    if (evt.button === MOUSE_LEFT_BUTTON) {
-      setActivePageStatus();
-    }
-  });
-  mapPinControl.addEventListener('keydown', function (evt) {
-    if (evt.key === 'Enter') {
-      setActivePageStatus();
-    }
-  });
-  typeOfAccommodation.addEventListener('change', function () {
-    validateMinPrice();
-  });
-  numberOfGuests.addEventListener('change', function () {
-    validateGuestsCount();
-  });
-  numberOfRooms.addEventListener('change', function () {
-    validateGuestsCount();
-  });
-  timeIn.addEventListener('change', function () {
-    timeOut.value = timeIn.value;
-  });
-  timeOut.addEventListener('change', function () {
-    timeIn.value = timeOut.value;
-  });
-  announcementFormReset.addEventListener('click', function () {
-    setInactivePageStatus();
-  });
-
   setInactivePageStatus();
   validateMinPrice();
   validateGuestsCount();
@@ -336,5 +306,43 @@ var openedCardEscPressHandler = function (evt) {
 };
 
 // остальной код
+
+mapPinControl.addEventListener('mousedown', function (evt) {
+  if (evt.button === MOUSE_LEFT_BUTTON) {
+    setActivePageStatus();
+  }
+});
+
+mapPinControl.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    setActivePageStatus();
+  }
+});
+
+// нужно ли обработчики, которые относятся к форме, добавлять только при активации страницы и удалять при ее переходе в неактивное состояние?
+
+typeOfAccommodation.addEventListener('change', function () {
+  validateMinPrice();
+});
+
+numberOfGuests.addEventListener('change', function () {
+  validateGuestsCount();
+});
+
+numberOfRooms.addEventListener('change', function () {
+  validateGuestsCount();
+});
+
+timeIn.addEventListener('change', function () {
+  timeOut.value = timeIn.value;
+});
+
+timeOut.addEventListener('change', function () {
+  timeIn.value = timeOut.value;
+});
+
+announcementFormReset.addEventListener('click', function () {
+  setInactivePageStatus();
+});
 
 window.addEventListener('load', windowLoadHandler);
