@@ -6,6 +6,7 @@ window.card = (function () {
     .content
     .querySelector('.map__card');
   var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var announcementCard;
 
   var createElement = function (tagName) {
     var classNames = Array.prototype.slice.call(arguments, [0, 1]);
@@ -71,7 +72,8 @@ window.card = (function () {
   };
 
   return {
-    createUniqueAnnouncementCard: createUniqueAnnouncementCard
+    createUniqueAnnouncementCard: createUniqueAnnouncementCard,
+    announcementCard: announcementCard
   };
 
 })();

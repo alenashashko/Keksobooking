@@ -21,8 +21,8 @@ window.pin = (function () {
     mapPinImage.alt = announcement.offer.title;
 
     pinElement.addEventListener('click', function () {
-      closeCard();
-      openCard(announcement);
+      window.map.closeCard();
+      window.map.openCard(announcement);
     });
     return pinElement;
   };

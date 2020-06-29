@@ -51,6 +51,6 @@ window.form = (function () {
   });
 
   announcementFormReset.addEventListener('click', function () {
-    setInactivePageStatus();
+    window.main.setInactivePageStatus();
   });
 })();
