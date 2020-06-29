@@ -10,8 +10,7 @@ window.map = (function () {
     });
   };
 
-  var closeCard = function () {
-    console.log(window.card.announcementCard); // ??????????????????
+  var closeCard = function () { // не срабатывает
     if (window.card.announcementCard) {
       window.card.announcementCard.remove();
       window.card.announcementCard = null;

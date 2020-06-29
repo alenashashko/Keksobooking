@@ -76,7 +76,7 @@
   });
 
   announcementFormReset.addEventListener('click', function () {
-    window.main.setInactivePageStatus();
+    setInactivePageStatus();
   });
 
   window.addEventListener('load', windowLoadHandler);
