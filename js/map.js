@@ -11,6 +11,7 @@ window.map = (function () {
   };
 
   var closeCard = function () {
+    console.log(window.card.announcementCard); // ??????????????????
     if (window.card.announcementCard) {
       window.card.announcementCard.remove();
       window.card.announcementCard = null;
@@ -27,6 +28,7 @@ window.map = (function () {
   };
 
   return {
+    closeCard: closeCard,
     openCard: openCard
   };
 })();

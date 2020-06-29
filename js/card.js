@@ -1,6 +1,13 @@
 'use strict';
 
 window.card = (function () {
+  var typesOfAccommodation = {
+    'palace': 'Дворец',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'bungalo': 'Бунгало'
+  };
+
   var map = document.querySelector('.map');
   var announcementCardTemplate = document.querySelector('#card')
     .content
@@ -23,7 +30,7 @@ window.card = (function () {
     cardElement.querySelector('.popup__text--address').textContent = announcement.offer.address;
     cardElement.querySelector('.popup__text--price').textContent = announcement.offer.price + '₽/ночь';
 
-    var offerType = window.data.typesOfAccommodation[announcement.offer.type];
+    var offerType = typesOfAccommodation[announcement.offer.type];
     cardElement.querySelector('.popup__type').textContent = offerType;
 
     cardElement.querySelector('.popup__text--capacity')

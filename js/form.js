@@ -14,7 +14,6 @@ window.form = (function () {
   var numberOfGuests = document.querySelector('#capacity');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
-  var announcementFormReset = document.querySelector('.ad-form__reset');
 
   var validateMinPrice = function () {
     priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
@@ -48,10 +47,6 @@ window.form = (function () {
 
   timeOut.addEventListener('change', function () {
     timeIn.value = timeOut.value;
-  });
-
-  announcementFormReset.addEventListener('click', function () { // ПЕРЕДЕЛАТЬ
-    window.main.setInactivePageStatus();
   });
 
   return {

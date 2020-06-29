@@ -56,6 +56,7 @@ window.data = (function () {
   };
 
   return {
+    typesOfAccommodation: typesOfAccommodation,
     getAnnouncementsArray: getAnnouncementsArray
   };
 })();
