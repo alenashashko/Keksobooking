@@ -58,8 +58,8 @@ window.main = (function () {
 
   var windowLoadHandler = function () {
     setInactivePageStatus();
-    validateMinPrice();
-    validateGuestsCount();
+    window.form.validateMinPrice();
+    window.form.validateGuestsCount();
   };
 
   mapPinControl.addEventListener('mousedown', function (evt) {
@@ -73,8 +73,6 @@ window.main = (function () {
       setActivePageStatus();
     }
   });
-
-  // нужно ли обработчики, которые относятся к форме, добавлять только при активации страницы и удалять при ее переходе в неактивное состояние?
 
   window.addEventListener('load', windowLoadHandler);
 

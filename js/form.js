@@ -50,7 +50,12 @@ window.form = (function () {
     timeIn.value = timeOut.value;
   });
 
-  announcementFormReset.addEventListener('click', function () {
+  announcementFormReset.addEventListener('click', function () { // ПЕРЕДЕЛАТЬ
     window.main.setInactivePageStatus();
   });
+
+  return {
+    validateMinPrice: validateMinPrice,
+    validateGuestsCount: validateGuestsCount
+  };
 })();

@@ -1,6 +1,6 @@
 'use strict';
 
-window.randomData = (function () {
+window.util = (function () {
   var getRandomNumber = function (minRandomNumber, maxRandomNumber) {
     var randomNumber = Math.floor(minRandomNumber + Math.random() * (maxRandomNumber - minRandomNumber + 1));
     return randomNumber;
@@ -17,7 +17,7 @@ window.randomData = (function () {
     return randomArray;
   };
 
-  var getRandomDataFromArray = function (array, result) {
+  var getdataFromArray = function (array, result) {
     var randomArray = getShuffledArray(array);
     if (result === 'array') {
       var i = getRandomNumber(1, randomArray.length);
@@ -32,6 +32,6 @@ window.randomData = (function () {
 
   return {
     getRandomNumber: getRandomNumber,
-    getRandomDataFromArray: getRandomDataFromArray
+    getdataFromArray: getdataFromArray
   };
 })();

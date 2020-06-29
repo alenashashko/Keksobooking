@@ -22,25 +22,25 @@ window.data = (function () {
 
   var getRandomAnnouncement = function (i) {
     var address = {
-      'x': window.randomData.getRandomNumber(0, mapOverlay.offsetWidth),
-      'y': window.randomData.getRandomNumber(130, 630)
+      'x': window.util.getRandomNumber(0, mapOverlay.offsetWidth),
+      'y': window.util.getRandomNumber(130, 630)
     };
     var announcement = {
       'author': {
         'avatar': 'img/avatars/user0' + (i + 1) + '.png'
       },
       'offer': {
-        'title': window.randomData.getRandomDataFromArray(CHARACTERISTICS, 'string'),
+        'title': window.util.getdataFromArray(CHARACTERISTICS, 'string'),
         'address': address.x + ', ' + address.y,
-        'price': window.randomData.getRandomNumber(1, 1000000),
-        'type': TYPES[window.randomData.getRandomNumber(0, 3)],
-        'rooms': window.randomData.getRandomNumber(1, 3),
-        'guests': window.randomData.getRandomNumber(1, 3),
-        'checkin': CHECKIN_AND_CHECKOUT_TIME[window.randomData.getRandomNumber(0, 2)],
-        'checkout': CHECKIN_AND_CHECKOUT_TIME[window.randomData.getRandomNumber(0, 2)],
-        'features': window.randomData.getRandomDataFromArray(FEATURES, 'array'),
-        'description': window.randomData.getRandomDataFromArray(CHARACTERISTICS, 'string'),
-        'photos': window.randomData.getRandomDataFromArray(PHOTOS, 'array'),
+        'price': window.util.getRandomNumber(1, 1000000),
+        'type': TYPES[window.util.getRandomNumber(0, 3)],
+        'rooms': window.util.getRandomNumber(1, 3),
+        'guests': window.util.getRandomNumber(1, 3),
+        'checkin': CHECKIN_AND_CHECKOUT_TIME[window.util.getRandomNumber(0, 2)],
+        'checkout': CHECKIN_AND_CHECKOUT_TIME[window.util.getRandomNumber(0, 2)],
+        'features': window.util.getdataFromArray(FEATURES, 'array'),
+        'description': window.util.getdataFromArray(CHARACTERISTICS, 'string'),
+        'photos': window.util.getdataFromArray(PHOTOS, 'array'),
       },
       'location': address
     };
