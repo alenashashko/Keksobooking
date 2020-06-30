@@ -8,10 +8,18 @@ window.form = (function () {
     'bungalo': '0'
   };
 
+  var MapPinControlSizes = {
+    WIDTH: 65,
+    HEIGHT: 62,
+    POINTER_HEIGHT: 22
+  };
+
   var typeOfAccommodation = document.querySelector('#type');
   var priceOfAccommodation = document.querySelector('#price');
   var numberOfRooms = document.querySelector('#room_number');
   var numberOfGuests = document.querySelector('#capacity');
+  var mapPinControl = document.querySelector('.map__pin--main');
+  var addressInput = document.querySelector('#address');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
 
@@ -27,6 +35,16 @@ window.form = (function () {
     } else {
       numberOfGuests.setCustomValidity('Количество комнат не соответствует количеству гостей');
     }
+  };
+
+  var setAddressValue = function (pageStatus) {
+    var mapPinControlLeftCoordinate = parseInt(mapPinControl.style.left, 10);
+    var mapPinControlTopCoordinate = parseInt(mapPinControl.style.top, 10);
+    var additionToLeftCoordinate = MapPinControlSizes.WIDTH / 2;
+    var additionToTopCoordinate = (pageStatus === 'active') ? (MapPinControlSizes.HEIGHT + MapPinControlSizes.POINTER_HEIGHT) :
+      MapPinControlSizes.HEIGHT / 2;
+    addressInput.value = Math.round(mapPinControlLeftCoordinate + additionToLeftCoordinate) + ', ' +
+    Math.round(mapPinControlTopCoordinate + additionToTopCoordinate);
   };
 
   typeOfAccommodation.addEventListener('change', function () {
@@ -51,6 +69,7 @@ window.form = (function () {
 
   return {
     validateMinPrice: validateMinPrice,
-    validateGuestsCount: validateGuestsCount
+    validateGuestsCount: validateGuestsCount,
+    setAddressValue: setAddressValue
   };
 })();

@@ -78,9 +78,18 @@ window.card = (function () {
     map.insertBefore(cardElement, mapFiltersContainer);
   };
 
+  var getAnnouncementCard = function () {
+    return announcementCard;
+  };
+
+  var setEmptyAnnouncementCard = function () {
+    announcementCard = null;
+  };
+
   return {
     createUniqueAnnouncementCard: createUniqueAnnouncementCard,
-    announcementCard: announcementCard
+    getAnnouncementCard: getAnnouncementCard,
+    removeAnnouncementCard: setEmptyAnnouncementCard
   };
 
 })();

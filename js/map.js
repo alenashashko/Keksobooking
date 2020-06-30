@@ -10,10 +10,10 @@ window.map = (function () {
     });
   };
 
-  var closeCard = function () { // не срабатывает
-    if (window.card.announcementCard) {
-      window.card.announcementCard.remove();
-      window.card.announcementCard = null;
+  var closeCard = function () {
+    if (window.card.getAnnouncementCard()) {
+      window.card.getAnnouncementCard().remove();
+      window.card.removeAnnouncementCard();
     }
 
     document.removeEventListener('keydown', openedCardEscPressHandler);
