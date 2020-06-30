@@ -89,7 +89,7 @@ window.card = (function () {
   return {
     createUniqueAnnouncementCard: createUniqueAnnouncementCard,
     getAnnouncementCard: getAnnouncementCard,
-    removeAnnouncementCard: setEmptyAnnouncementCard
+    setEmptyAnnouncementCard: setEmptyAnnouncementCard
   };
 
 })();

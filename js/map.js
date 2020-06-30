@@ -13,14 +13,14 @@ window.map = (function () {
   var closeCard = function () {
     if (window.card.getAnnouncementCard()) {
       window.card.getAnnouncementCard().remove();
-      window.card.removeAnnouncementCard();
+      window.card.setEmptyAnnouncementCard();
     }
 
     document.removeEventListener('keydown', openedCardEscPressHandler);
   };
 
   var openedCardEscPressHandler = function (evt) {
-    if (evt.key === 'Escape') {
+    if (window.util.isEscapeEvent(evt)) {
       evt.preventDefault();
       closeCard();
     }
