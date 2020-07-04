@@ -38,9 +38,42 @@ window.page = (function () {
     toggleDisabledElementsAttribute(mapFilters, true);
   };
 
-  mapPinControl.addEventListener('mousedown', function (evt) {
+  mapPinControl.addEventListener('mousedown', function (evt) { // главный пин перемещаем только зажатой левой КМ или любой?
     if (window.util.isMouseLeftButtonEvent(evt)) {
+      evt.preventDefault(); // ?
       setActivePageStatus();
+
+      var startCoords = {
+        x: evt.clientX,
+        y: evt.clientY
+      };
+
+      var mouseMoveHandler = function (moveEvt) {
+        moveEvt.preventDefault(); // ?
+
+        var shift = {
+          x: startCoords.x - moveEvt.clientX,
+          y: startCoords.y - moveEvt.clientY
+        };
+
+        startCoords = {
+          x: moveEvt.clientX,
+          y: moveEvt.clientY
+        };
+
+        mapPinControl.style.top = (mapPinControl.offsetTop - shift.y) + 'px';
+        mapPinControl.style.left = (mapPinControl.offsetLeft - shift.x) + 'px';
+      };
+
+      var mouseUpHandler = function (upEvt) {
+        upEvt.preventDefault(); // ?
+
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+      };
+
+      document.addEventListener('mousemove', mouseMoveHandler);
+      document.addEventListener('mouseup', mouseUpHandler);
     }
   });
 
