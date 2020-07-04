@@ -31,21 +31,23 @@
       y: evt.clientY - mapData.top - mouseOffsetY
     };
 
-    if ((mapPinControlCoords.x + MapPinControlSizes.WIDTH / 2) <= MapPinControlCoordsLimits.MIN_X) {
+    if ((mapPinControlCoords.x + MapPinControlSizes.WIDTH / 2) < MapPinControlCoordsLimits.MIN_X) {
       mapPinControl.style.left = MapPinControlCoordsLimits.MIN_X - Math.round(MapPinControlSizes.WIDTH / 2) + 'px';
-    } else if ((mapPinControlCoords.x + MapPinControlSizes.WIDTH / 2) >= MapPinControlCoordsLimits.MAX_X) {
+    } else if ((mapPinControlCoords.x + MapPinControlSizes.WIDTH / 2) > MapPinControlCoordsLimits.MAX_X) {
       mapPinControl.style.left = MapPinControlCoordsLimits.MAX_X - Math.round(MapPinControlSizes.WIDTH / 2) + 'px';
     } else {
       mapPinControl.style.left = mapPinControlCoords.x + 'px';
     }
 
-    if ((mapPinControlCoords.y + MapPinControlSizes.TOTAL_HEIGHT) <= MapPinControlCoordsLimits.MIN_Y) { // ПРЫЖОК! + 630
+    if ((mapPinControlCoords.y + MapPinControlSizes.TOTAL_HEIGHT) < MapPinControlCoordsLimits.MIN_Y) { // ПРЫЖОК!
       mapPinControl.style.top = MapPinControlCoordsLimits.MIN_Y - MapPinControlSizes.TOTAL_HEIGHT + 'px';
-    } else if ((mapPinControlCoords.y + MapPinControlSizes.TOTAL_HEIGHT) >= MapPinControlCoordsLimits.MAX_Y) {
+    } else if ((mapPinControlCoords.y + MapPinControlSizes.TOTAL_HEIGHT) > MapPinControlCoordsLimits.MAX_Y) {
       mapPinControl.style.left = MapPinControlCoordsLimits.MAX_Y - MapPinControlSizes.TOTAL_HEIGHT + 'px';
     } else {
       mapPinControl.style.top = mapPinControlCoords.y + 'px';
     }
+
+    window.form.setAddressValue('active');
   };
 
   var mouseMoveHandler = function (moveEvt) {
@@ -53,14 +55,12 @@
     wasMapPinControlMoved = true;
 
     movePin(moveEvt);
-    window.form.setAddressValue('active');
   };
 
   var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault(); // ?
     if (wasMapPinControlMoved) {
       movePin(upEvt);
-      // window.form.setAddressValue('active'); нужно ли?
     }
 
     document.removeEventListener('mousemove', mouseMoveHandler);
