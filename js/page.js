@@ -19,7 +19,7 @@ window.page = (function () {
     var announcements = window.data.getAnnouncementsArray();
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
-    window.pin.drawMapPins(announcements); // при каждом нажатии на центральный пин происходит отрисовка рандомных пинов
+    window.pin.drawMapPins(announcements);
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
     toggleDisabledElementsAttribute(mapFilters, false);
@@ -38,11 +38,14 @@ window.page = (function () {
     toggleDisabledElementsAttribute(mapFilters, true);
   };
 
-  mapPinControl.addEventListener('mousedown', function (evt) {
+  var mapPinControlMousedownHandler = function (evt) {
     if (window.util.isMouseLeftButtonEvent(evt)) {
       setActivePageStatus();
+      mapPinControl.removeEventListener('mousedown', mapPinControlMousedownHandler);
     }
-  });
+  };
+
+  mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler); // при каждом нажатии на центральный пин происходит отрисовка рандомных пинов
 
   mapPinControl.addEventListener('keydown', function (evt) {
     if (window.util.isEnterEvent(evt)) {
@@ -52,6 +55,7 @@ window.page = (function () {
 
   announcementFormReset.addEventListener('click', function () {
     setInactivePageStatus();
+    mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
   });
 
   return {
