@@ -15,37 +15,49 @@
   var mouseOffsetY;
 
   var MapPinControlCoordsLimits = { // порядок?
-    MIN_X: 0,
-    MAX_X: map.offsetWidth,
-    MIN_Y: 130,
-    MAX_Y: 630,
+    X_MIN: 0,
+    X_MAX: map.offsetWidth,
+    Y_MIN: 130,
+    Y_MAX: 630,
   };
 
   window.addEventListener('scroll', function () {
     mapData = map.getBoundingClientRect();
   });
 
-  var movePin = function (evt) {
+  var getPinControlTipCoords = function (minCoord, maxCoord, currentCoord) { // первый вариант
+    return Math.max(minCoord, Math.min(maxCoord, currentCoord));
+  };
+
+  // var getPinControlTipCoords = function (currentCoord, minCoord, maxCoord) { // второй вариант
+  //   if (currentCoord < minCoord) {
+  //     return minCoord;
+  //   } else if (currentCoord > maxCoord) {
+  //     return maxCoord;
+  //   } else {
+  //     return currentCoord;
+  //   }
+  // };
+
+  // var clamp = function (number, min, max) {
+  //   if (number < min) {
+  //     return min;
+  //   } else if (number > max) {
+  //     return max;
+  //   } else {
+  //     return number;
+  //   }
+  // };
+
+  var movePinControl = function (evt) {
     var mapPinControlCoords = {
       x: evt.clientX - mapData.left - mouseOffsetX,
       y: evt.clientY - mapData.top - mouseOffsetY
     };
 
-    if ((mapPinControlCoords.x + MapPinControlSizes.WIDTH / 2) < MapPinControlCoordsLimits.MIN_X) {
-      mapPinControl.style.left = MapPinControlCoordsLimits.MIN_X - Math.round(MapPinControlSizes.WIDTH / 2) + 'px';
-    } else if ((mapPinControlCoords.x + MapPinControlSizes.WIDTH / 2) > MapPinControlCoordsLimits.MAX_X) {
-      mapPinControl.style.left = MapPinControlCoordsLimits.MAX_X - Math.round(MapPinControlSizes.WIDTH / 2) + 'px';
-    } else {
-      mapPinControl.style.left = mapPinControlCoords.x + 'px';
-    }
+    mapPinControl.style.left = getPinControlTipCoords(MapPinControlCoordsLimits.X_MIN, MapPinControlCoordsLimits.X_MAX, mapPinControlCoords.x + MapPinControlSizes.WIDTH / 2) - Math.round(MapPinControlSizes.WIDTH / 2) + 'px';
 
-    if ((mapPinControlCoords.y + MapPinControlSizes.TOTAL_HEIGHT) < MapPinControlCoordsLimits.MIN_Y) { // ПРЫЖОК!
-      mapPinControl.style.top = MapPinControlCoordsLimits.MIN_Y - MapPinControlSizes.TOTAL_HEIGHT + 'px';
-    } else if ((mapPinControlCoords.y + MapPinControlSizes.TOTAL_HEIGHT) > MapPinControlCoordsLimits.MAX_Y) {
-      mapPinControl.style.left = MapPinControlCoordsLimits.MAX_Y - MapPinControlSizes.TOTAL_HEIGHT + 'px';
-    } else {
-      mapPinControl.style.top = mapPinControlCoords.y + 'px';
-    }
+    mapPinControl.style.top = getPinControlTipCoords(MapPinControlCoordsLimits.Y_MIN, MapPinControlCoordsLimits.Y_MAX, mapPinControlCoords.y + MapPinControlSizes.TOTAL_HEIGHT) - MapPinControlSizes.TOTAL_HEIGHT + 'px';
 
     window.form.setAddressValue('active');
   };
@@ -54,13 +66,13 @@
     moveEvt.preventDefault(); // ?
     wasMapPinControlMoved = true;
 
-    movePin(moveEvt);
+    movePinControl(moveEvt);
   };
 
   var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault(); // ?
     if (wasMapPinControlMoved) {
-      movePin(upEvt);
+      movePinControl(upEvt);
     }
 
     document.removeEventListener('mousemove', mouseMoveHandler);
