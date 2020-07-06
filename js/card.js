@@ -1,19 +1,19 @@
 'use strict';
 
 window.card = (function () {
-  var typesOfAccommodation = {
-    'palace': 'Дворец',
-    'flat': 'Квартира',
-    'house': 'Дом',
-    'bungalo': 'Бунгало'
-  };
-
   var map = document.querySelector('.map');
   var announcementCardTemplate = document.querySelector('#card')
     .content
     .querySelector('.map__card');
   var mapFiltersContainer = document.querySelector('.map__filters-container');
   var announcementCard;
+
+  var typesOfAccommodation = {
+    'palace': 'Дворец',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'bungalo': 'Бунгало'
+  };
 
   var createElement = function (tagName) {
     var classNames = Array.prototype.slice.call(arguments, [0, 1]);

@@ -1,12 +1,12 @@
 'use strict';
 
 window.util = (function () {
+  var MOUSE_LEFT_BUTTON = 0;
+
   var EventKeyCode = {
     ENTER: 'Enter',
     ESCAPE: 'Escape'
   };
-
-  var MOUSE_LEFT_BUTTON = 0;
 
   var isEnterEvent = function (evt) {
     return evt.key === EventKeyCode.ENTER;

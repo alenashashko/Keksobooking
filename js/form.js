@@ -1,13 +1,6 @@
 'use strict';
 
 window.form = (function () {
-  var minPricesOfAccommodation = {
-    'palace': '10000',
-    'flat': '1000',
-    'house': '5000',
-    'bungalo': '0'
-  };
-
   var MapPinControlSizes = {
     WIDTH: 65,
     HEIGHT: 62,
@@ -22,6 +15,13 @@ window.form = (function () {
   var addressInput = document.querySelector('#address');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
+
+  var minPricesOfAccommodation = {
+    'palace': '10000',
+    'flat': '1000',
+    'house': '5000',
+    'bungalo': '0'
+  };
 
   var validateMinPrice = function () {
     priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
