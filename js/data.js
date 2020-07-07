@@ -16,7 +16,7 @@ window.data = (function () {
     'bungalo': 'Бунгало'
   };
 
-  var TYPES = Object.keys(typesOfAccommodation);
+  var types = Object.keys(typesOfAccommodation);
 
   var mapOverlay = document.querySelector('.map__overlay');
 
@@ -33,7 +33,7 @@ window.data = (function () {
         'title': window.random.getdataFromArray(CHARACTERISTICS, 'string'),
         'address': address.x + ', ' + address.y,
         'price': window.random.getRandomNumber(1, 1000000),
-        'type': TYPES[window.random.getRandomNumber(0, 3)],
+        'type': types[window.random.getRandomNumber(0, 3)],
         'rooms': window.random.getRandomNumber(1, 3),
         'guests': window.random.getRandomNumber(1, 3),
         'checkin': CHECKIN_AND_CHECKOUT_TIME[window.random.getRandomNumber(0, 2)],

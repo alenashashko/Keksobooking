@@ -1,15 +1,15 @@
 'use strict';
 
 window.pin = (function () {
-  var mapPinTemplate = document.querySelector('#pin')
-  .content
-  .querySelector('.map__pin');
-  var mapPinsList = document.querySelector('.map__pins');
-
   var MapPinSizes = {
     WIDTH: 50,
     HEIGHT: 70
   };
+
+  var mapPinTemplate = document.querySelector('#pin')
+  .content
+  .querySelector('.map__pin');
+  var mapPinsList = document.querySelector('.map__pins');
 
   var getUniqueMapPin = function (announcement) {
     var pinElement = mapPinTemplate.cloneNode(true);
