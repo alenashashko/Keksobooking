@@ -52,7 +52,7 @@ window.card = (function () {
     }
 
     var offerDescription = cardElement.querySelector('.popup__description');
-    if (announcement.offer.description.length > 0) { // после прихода данных с сервера посм, может ли не быть описания в карточке
+    if (announcement.offer.description.length > 0) {
       offerDescription.textContent = announcement.offer.description;
     } else {
       offerDescription.remove();
