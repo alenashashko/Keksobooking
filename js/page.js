@@ -28,6 +28,8 @@ window.page = (function () {
   var setInactivePageStatus = function () {
     var mapPins = document.querySelectorAll('button.map__pin:not(.map__pin--main)');
     map.classList.add('map--faded');
+    mapPinControl.style.top = '375px';
+    mapPinControl.style.left = '570px';
     announcementForm.classList.add('ad-form--disabled');
     window.form.setAddressValue('inactive');
     for (var i = 0; i < mapPins.length; i++) {

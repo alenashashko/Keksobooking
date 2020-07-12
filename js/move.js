@@ -8,8 +8,8 @@
 
   var map = document.querySelector('.map');
   var mapPinControl = document.querySelector('.map__pin--main');
-  var mapData = map.getBoundingClientRect();
   var wasMapPinControlMoved = false;
+  var mapData;
   var mouseOffsetX;
   var mouseOffsetY;
 
@@ -19,10 +19,6 @@
     minY: 130,
     maxY: 630,
   };
-
-  window.addEventListener('scroll', function () {
-    mapData = map.getBoundingClientRect();
-  });
 
   var getPinControlTipCoords = function (minCoord, maxCoord, currentCoord) {
     return Math.max(minCoord, Math.min(maxCoord, currentCoord));
@@ -61,8 +57,12 @@
   mapPinControl.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
     if (window.util.isMouseLeftButtonEvent(evt)) {
+      mapData = map.getBoundingClientRect();
       mouseOffsetX = evt.clientX - mapData.left - mapPinControl.offsetLeft;
       mouseOffsetY = evt.clientY - mapData.top - mapPinControl.offsetTop;
+      window.addEventListener('scroll', function () {
+        mapData = map.getBoundingClientRect();
+      });
       document.addEventListener('mousemove', mouseMoveHandler);
       document.addEventListener('mouseup', mouseUpHandler);
     }
