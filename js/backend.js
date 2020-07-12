@@ -4,7 +4,8 @@ window.backend = (function () {
   var TIMEOUT_IN_MS = 10000;
 
   var URLs = {
-    URL_LOAD: 'https://javascript.pages.academy/keksobooking/data'
+    URL_LOAD: 'https://javascript.pages.academy/keksobooking/data',
+    URL_SAVE: 'https://javascript.pages.academy/keksobooking'
   };
 
   var StatusCodes = {
@@ -59,7 +60,14 @@ window.backend = (function () {
     return xhr;
   };
 
+  var saveData = function (onSuccess, onError, data) {
+    var xhr = makeRequest(onSuccess, onError);
+    xhr.open('POST', URLs.URL_SAVE);
+    xhr.send(data);
+  };
+
   return {
-    loadData: loadData
+    loadData: loadData,
+    saveData: saveData
   };
 })();

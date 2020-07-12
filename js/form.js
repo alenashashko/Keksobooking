@@ -15,6 +15,7 @@ window.form = (function () {
   var addressInput = document.querySelector('#address');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
+  // var form = document.querySelector('.ad-form');
 
   var minPricesOfAccommodation = {
     'palace': '10000',
@@ -66,6 +67,11 @@ window.form = (function () {
   timeOut.addEventListener('change', function () {
     timeIn.value = timeOut.value;
   });
+
+  // form.addEventListener('submit', function (evt) {
+  //   evt.preventDefault();
+  //   saveData(new FormData(form));
+  // });
 
   return {
     validateMinPrice: validateMinPrice,
