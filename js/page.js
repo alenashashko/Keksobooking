@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+window.page = (function () {
   var map = document.querySelector('.map');
   var announcementForm = document.querySelector('.ad-form');
   var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
@@ -8,6 +8,7 @@
   var mapFilters = mapFiltersForm.children;
   var mapPinControl = document.querySelector('.map__pin--main');
   var announcementFormReset = document.querySelector('.ad-form__reset');
+  var announcements = [];
 
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
     for (var i = 0; i < elements.length; i++) {
@@ -18,8 +19,7 @@
   var setActivePageStatus = function () {
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
-    window.backend.loadData(successHandler, errorHandler);
-    // при повторной активации страницы гружу данные заново ???
+    window.pins.drawMapPins(announcements);
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
     toggleDisabledElementsAttribute(mapFilters, false);
@@ -38,10 +38,12 @@
     window.map.closeCard();
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
+    mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
+    mapPinControl.addEventListener('keydown', MapPinControlEnterPressHandler);
   };
 
   var successHandler = function (data) {
-    window.pins.drawMapPins(data);
+    announcements = data;
   };
 
   var errorHandler = function () { // будет сообщение об ошибке
@@ -63,14 +65,17 @@
     }
   };
 
-  mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
-
-  mapPinControl.addEventListener('keydown', MapPinControlEnterPressHandler);
-
   announcementFormReset.addEventListener('click', function () {
     setInactivePageStatus();
-    mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
-    // навешивать обработчики в setInactivePageStatus ?
-    mapPinControl.addEventListener('keydown', MapPinControlEnterPressHandler);
   });
+
+  var windowLoadHandler = function () {
+    window.backend.loadData(successHandler, errorHandler);
+  };
+
+  window.addEventListener('load', windowLoadHandler);
+
+  return {
+    setInactivePageStatus: setInactivePageStatus
+  };
 })();

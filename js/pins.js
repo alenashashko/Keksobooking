@@ -29,15 +29,10 @@ window.pins = (function () {
 
   var drawMapPins = function (announcements) {
     var fragment = document.createDocumentFragment();
-    var announcementsCount = 0;
     for (var i = 0; i < announcements.length; i++) {
-      if (announcements[i].offer) { // 5.2 ТЗ
+      if (announcements[i].offer) { // переделать
         var uniqueMapPin = getUniqueMapPin(announcements[i]);
         fragment.appendChild(uniqueMapPin);
-        announcementsCount++;
-        if (announcementsCount === 5) {
-          break;
-        }
       }
     }
     mapPinsList.appendChild(fragment);

@@ -42,7 +42,7 @@ window.backend = (function () {
     });
 
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка запроса'); // обработать случай получения не json
+      onError('Произошла ошибка запроса');
     });
 
     xhr.addEventListener('timeout', function () {
@@ -57,7 +57,6 @@ window.backend = (function () {
     var xhr = makeRequest(onSuccess, onError);
     xhr.open('GET', URLs.URL_LOAD);
     xhr.send();
-    return xhr;
   };
 
   var saveData = function (onSuccess, onError, data) {
