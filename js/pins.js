@@ -1,6 +1,6 @@
 'use strict';
 
-window.pin = (function () {
+window.pins = (function () {
   var MapPinSizes = {
     WIDTH: 50,
     HEIGHT: 70
@@ -29,9 +29,16 @@ window.pin = (function () {
 
   var drawMapPins = function (announcements) {
     var fragment = document.createDocumentFragment();
+    var announcementsCount = 0;
     for (var i = 0; i < announcements.length; i++) {
-      var uniqueMapPin = getUniqueMapPin(announcements[i]);
-      fragment.appendChild(uniqueMapPin);
+      if (announcements[i].offer) { // 5.2 ТЗ
+        var uniqueMapPin = getUniqueMapPin(announcements[i]);
+        fragment.appendChild(uniqueMapPin);
+        announcementsCount++;
+        if (announcementsCount === 5) {
+          break;
+        }
+      }
     }
     mapPinsList.appendChild(fragment);
   };

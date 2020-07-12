@@ -56,6 +56,7 @@ window.backend = (function () {
     var xhr = makeRequest(onSuccess, onError);
     xhr.open('GET', URLs.URL_LOAD);
     xhr.send();
+    return xhr;
   };
 
   return {

@@ -1,6 +1,6 @@
 'use strict';
 
-window.page = (function () {
+(function () {
   var map = document.querySelector('.map');
   var announcementForm = document.querySelector('.ad-form');
   var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
@@ -16,10 +16,10 @@ window.page = (function () {
   };
 
   var setActivePageStatus = function () {
-    var announcements = window.data.getAnnouncementsArray();
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
-    window.pin.drawMapPins(announcements);
+    window.backend.loadData(successHandler, errorHandler);
+    // при повторной активации страницы гружу данные заново ???
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
     toggleDisabledElementsAttribute(mapFilters, false);
@@ -40,27 +40,37 @@ window.page = (function () {
     toggleDisabledElementsAttribute(mapFilters, true);
   };
 
+  var successHandler = function (data) {
+    window.pins.drawMapPins(data);
+  };
+
+  var errorHandler = function () { // будет сообщение об ошибке
+  };
+
   var mapPinControlMousedownHandler = function (evt) {
     if (window.util.isMouseLeftButtonEvent(evt)) {
       setActivePageStatus();
       mapPinControl.removeEventListener('mousedown', mapPinControlMousedownHandler);
+      mapPinControl.removeEventListener('keydown', MapPinControlEnterPressHandler);
     }
   };
 
-  mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler); // при каждом нажатии на центральный пин происходит отрисовка рандомных пинов
-
-  mapPinControl.addEventListener('keydown', function (evt) {
+  var MapPinControlEnterPressHandler = function (evt) {
     if (window.util.isEnterEvent(evt)) {
       setActivePageStatus();
+      mapPinControl.removeEventListener('mousedown', mapPinControlMousedownHandler);
+      mapPinControl.removeEventListener('keydown', MapPinControlEnterPressHandler);
     }
-  });
+  };
+
+  mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
+
+  mapPinControl.addEventListener('keydown', MapPinControlEnterPressHandler);
 
   announcementFormReset.addEventListener('click', function () {
     setInactivePageStatus();
     mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
+    // навешивать обработчики в setInactivePageStatus ?
+    mapPinControl.addEventListener('keydown', MapPinControlEnterPressHandler);
   });
-
-  return {
-    setInactivePageStatus: setInactivePageStatus
-  };
 })();
