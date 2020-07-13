@@ -9,6 +9,10 @@ window.page = (function () {
   var mapPinControl = document.querySelector('.map__pin--main');
   var announcementFormReset = document.querySelector('.ad-form__reset');
   var announcements = [];
+  var errorMessageTemplate = document.querySelector('#error')
+  .content
+  .querySelector('.error');
+  var mainElement = document.querySelector('main');
 
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
     for (var i = 0; i < elements.length; i++) {
@@ -36,6 +40,9 @@ window.page = (function () {
       mapPins[i].remove();
     }
     window.map.closeCard();
+    window.backend.loadData(successHandler, errorHandler);
+    //  оставила вызов функции loadData только здесь и убрала из загрузки,
+    // так как эта функция вызывается при событии загрузки страницы
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
     mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
@@ -46,7 +53,21 @@ window.page = (function () {
     announcements = data;
   };
 
-  var errorHandler = function () { // будет сообщение об ошибке
+  var errorHandler = function (message) {
+    var errorMessage = errorMessageTemplate.cloneNode(true);
+    var errorMessageText = errorMessage.querySelector('.error__message');
+    var errorButton = errorMessage.querySelector('.error__button');
+    errorMessageText.textContent = message;
+    errorButton.addEventListener('click', function () {
+      mainElement.removeChild(errorMessage);
+    });
+    document.addEventListener('keydown', function (evt) {
+      if (window.util.isEscapeEvent(evt)) {
+        evt.preventDefault();
+        mainElement.removeChild(errorMessage);
+      }
+    });
+    mainElement.appendChild(errorMessage);
   };
 
   var mapPinControlMousedownHandler = function (evt) {
@@ -68,12 +89,6 @@ window.page = (function () {
   announcementFormReset.addEventListener('click', function () {
     setInactivePageStatus();
   });
-
-  var windowLoadHandler = function () {
-    window.backend.loadData(successHandler, errorHandler);
-  };
-
-  window.addEventListener('load', windowLoadHandler);
 
   return {
     setInactivePageStatus: setInactivePageStatus

@@ -4,7 +4,7 @@ window.backend = (function () {
   var TIMEOUT_IN_MS = 10000;
 
   var URLs = {
-    URL_LOAD: 'https://javascript.pages.academy/keksobooking/data',
+    URL_LOAD: 'https://javascript.pages.academy/keksobooking/dat', // сломано
     URL_SAVE: 'https://javascript.pages.academy/keksobooking'
   };
 
