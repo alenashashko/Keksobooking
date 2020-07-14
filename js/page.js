@@ -45,20 +45,18 @@ window.page = (function () {
       mapPins[i].remove();
     }
     window.map.closeCard();
-    window.backend.loadData(successHandler, errorHandler);
-    //  оставила вызов функции loadData только здесь и убрала из загрузки,
-    // так как эта функция вызывается при событии загрузки страницы
+    window.backend.loadData(loadSuccessHandler, loadErrorHandler);
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
     mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
     mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
   };
 
-  var successHandler = function (data) {
+  var loadSuccessHandler = function (data) {
     announcements = data;
   };
 
-  var errorHandler = function (message) {
+  var loadErrorHandler = function (message) {
     var errorMessage = errorMessageTemplate.cloneNode(true);
     var errorMessageText = errorMessage.querySelector('.error__message');
     var errorButton = errorMessage.querySelector('.error__button');

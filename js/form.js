@@ -15,7 +15,7 @@ window.form = (function () {
   var addressInput = document.querySelector('#address');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
-  // var form = document.querySelector('.ad-form');
+  var form = document.querySelector('.ad-form');
 
   var minPricesOfAccommodation = {
     'palace': '10000',
@@ -48,6 +48,10 @@ window.form = (function () {
     Math.round(mapPinControlTopCoordinate + additionToTopCoordinate);
   };
 
+  var saveSuccessHandler = function () {
+    window.page.setInactivePageStatus();
+  };
+
   typeOfAccommodation.addEventListener('change', function () {
     validateMinPrice();
   });
@@ -68,10 +72,12 @@ window.form = (function () {
     timeIn.value = timeOut.value;
   });
 
-  // form.addEventListener('submit', function (evt) {
-  //   evt.preventDefault();
-  //   saveData(new FormData(form));
-  // });
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.saveData(function () {
+      saveSuccessHandler();
+    }, window.page.loadErrorHandler, new FormData(form));
+  });
 
   return {
     validateMinPrice: validateMinPrice,
