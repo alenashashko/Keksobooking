@@ -1,6 +1,11 @@
 'use strict';
 
 window.page = (function () {
+  var MapPinControlStartPosition = {
+    TOP: '375px',
+    LEFT: '570px'
+  };
+
   var map = document.querySelector('.map');
   var announcementForm = document.querySelector('.ad-form');
   var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
@@ -8,6 +13,11 @@ window.page = (function () {
   var mapFilters = mapFiltersForm.children;
   var mapPinControl = document.querySelector('.map__pin--main');
   var announcementFormReset = document.querySelector('.ad-form__reset');
+  var announcements = [];
+  var errorMessageTemplate = document.querySelector('#error')
+  .content
+  .querySelector('.error');
+  var mainElement = document.querySelector('main');
 
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
     for (var i = 0; i < elements.length; i++) {
@@ -16,10 +26,9 @@ window.page = (function () {
   };
 
   var setActivePageStatus = function () {
-    var announcements = window.data.getAnnouncementsArray();
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
-    window.pin.drawMapPins(announcements);
+    window.pins.drawMapPins(announcements);
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
     toggleDisabledElementsAttribute(mapFilters, false);
@@ -28,34 +37,62 @@ window.page = (function () {
   var setInactivePageStatus = function () {
     var mapPins = document.querySelectorAll('button.map__pin:not(.map__pin--main)');
     map.classList.add('map--faded');
+    mapPinControl.style.top = MapPinControlStartPosition.TOP;
+    mapPinControl.style.left = MapPinControlStartPosition.LEFT;
     announcementForm.classList.add('ad-form--disabled');
     window.form.setAddressValue('inactive');
     for (var i = 0; i < mapPins.length; i++) {
       mapPins[i].remove();
     }
     window.map.closeCard();
+    window.backend.loadData(successHandler, errorHandler);
+    //  оставила вызов функции loadData только здесь и убрала из загрузки,
+    // так как эта функция вызывается при событии загрузки страницы
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
+    mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
+    mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
+  };
+
+  var successHandler = function (data) {
+    announcements = data;
+  };
+
+  var errorHandler = function (message) {
+    var errorMessage = errorMessageTemplate.cloneNode(true);
+    var errorMessageText = errorMessage.querySelector('.error__message');
+    var errorButton = errorMessage.querySelector('.error__button');
+    errorMessageText.textContent = message;
+    errorButton.addEventListener('click', function () {
+      mainElement.removeChild(errorMessage);
+    });
+    document.addEventListener('keydown', function (evt) {
+      if (window.util.isEscapeEvent(evt)) {
+        evt.preventDefault();
+        mainElement.removeChild(errorMessage);
+      }
+    });
+    mainElement.appendChild(errorMessage);
   };
 
   var mapPinControlMousedownHandler = function (evt) {
     if (window.util.isMouseLeftButtonEvent(evt)) {
       setActivePageStatus();
       mapPinControl.removeEventListener('mousedown', mapPinControlMousedownHandler);
+      mapPinControl.removeEventListener('keydown', mapPinControlEnterPressHandler);
     }
   };
 
-  mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler); // при каждом нажатии на центральный пин происходит отрисовка рандомных пинов
-
-  mapPinControl.addEventListener('keydown', function (evt) {
+  var mapPinControlEnterPressHandler = function (evt) {
     if (window.util.isEnterEvent(evt)) {
       setActivePageStatus();
+      mapPinControl.removeEventListener('mousedown', mapPinControlMousedownHandler);
+      mapPinControl.removeEventListener('keydown', mapPinControlEnterPressHandler);
     }
-  });
+  };
 
   announcementFormReset.addEventListener('click', function () {
     setInactivePageStatus();
-    mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
   });
 
   return {

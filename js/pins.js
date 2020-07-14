@@ -1,6 +1,8 @@
 'use strict';
 
-window.pin = (function () {
+window.pins = (function () {
+  var MAX_SIMILAR_ANNOUNCEMENTS_COUNT = 5;
+
   var MapPinSizes = {
     WIDTH: 50,
     HEIGHT: 70
@@ -29,7 +31,10 @@ window.pin = (function () {
 
   var drawMapPins = function (announcements) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < announcements.length; i++) {
+    for (var i = 0; i < MAX_SIMILAR_ANNOUNCEMENTS_COUNT; i++) {
+      if (!announcements[i].offer) {
+        continue;
+      }
       var uniqueMapPin = getUniqueMapPin(announcements[i]);
       fragment.appendChild(uniqueMapPin);
     }
