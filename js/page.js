@@ -1,6 +1,11 @@
 'use strict';
 
 window.page = (function () {
+  var MapPinControlStartPosition = {
+    TOP: '375px',
+    LEFT: '570px'
+  };
+
   var map = document.querySelector('.map');
   var announcementForm = document.querySelector('.ad-form');
   var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
@@ -32,8 +37,8 @@ window.page = (function () {
   var setInactivePageStatus = function () {
     var mapPins = document.querySelectorAll('button.map__pin:not(.map__pin--main)');
     map.classList.add('map--faded');
-    mapPinControl.style.top = '375px';
-    mapPinControl.style.left = '570px';
+    mapPinControl.style.top = MapPinControlStartPosition.TOP;
+    mapPinControl.style.left = MapPinControlStartPosition.LEFT;
     announcementForm.classList.add('ad-form--disabled');
     window.form.setAddressValue('inactive');
     for (var i = 0; i < mapPins.length; i++) {
@@ -46,7 +51,7 @@ window.page = (function () {
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
     mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
-    mapPinControl.addEventListener('keydown', MapPinControlEnterPressHandler);
+    mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
   };
 
   var successHandler = function (data) {
@@ -74,15 +79,15 @@ window.page = (function () {
     if (window.util.isMouseLeftButtonEvent(evt)) {
       setActivePageStatus();
       mapPinControl.removeEventListener('mousedown', mapPinControlMousedownHandler);
-      mapPinControl.removeEventListener('keydown', MapPinControlEnterPressHandler);
+      mapPinControl.removeEventListener('keydown', mapPinControlEnterPressHandler);
     }
   };
 
-  var MapPinControlEnterPressHandler = function (evt) {
+  var mapPinControlEnterPressHandler = function (evt) {
     if (window.util.isEnterEvent(evt)) {
       setActivePageStatus();
       mapPinControl.removeEventListener('mousedown', mapPinControlMousedownHandler);
-      mapPinControl.removeEventListener('keydown', MapPinControlEnterPressHandler);
+      mapPinControl.removeEventListener('keydown', mapPinControlEnterPressHandler);
     }
   };
 
