@@ -62,16 +62,27 @@ window.page = (function () {
     var errorMessageText = errorMessage.querySelector('.error__message');
     var errorButton = errorMessage.querySelector('.error__button');
     errorMessageText.textContent = message;
-    errorButton.addEventListener('click', function () {
-      errorMessage.remove();
-    });
     mainElement.appendChild(errorMessage);
-    document.addEventListener('keydown', function (evt) { // как удалять этот обработчик?
+    var OpenedErrorMessageEscapePressHandler = function (evt) {
+      // написала обработчик внутри функции, так как в нем используется errorMessage локальная переменная - так нормально?
       if (window.util.isEscapeEvent(evt)) {
         evt.preventDefault();
         errorMessage.remove();
+        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+      }
+    };
+    errorButton.addEventListener('click', function () {
+      errorMessage.remove();
+      setInactivePageStatus();
+      document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+    });
+    errorMessage.addEventListener('click', function (evt) {
+      if (evt.target === errorMessage) {
+        errorMessage.remove();
+        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
       }
     });
+    document.addEventListener('keydown', OpenedErrorMessageEscapePressHandler);
   };
 
   var mapPinControlMousedownHandler = function (evt) {
@@ -93,6 +104,7 @@ window.page = (function () {
   announcementFormReset.addEventListener('click', function () {
     setInactivePageStatus();
     form.reset();
+    window.form.setAddressValue('inactive');
   });
 
   return {

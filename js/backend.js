@@ -4,8 +4,8 @@ window.backend = (function () {
   var TIMEOUT_IN_MS = 10000;
 
   var Url = {
-    LOAD: 'https://javascript.pages.academy/keksobooking/data',
-    SAVE: 'https://javascript.pages.academy/keksobookin'
+    LOAD: 'https://javascript.pages.academy/keksobooking/dat',
+    SAVE: 'https://javascript.pages.academy/keksobooking'
   };
 
   var StatusCodes = {

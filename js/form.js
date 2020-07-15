@@ -58,6 +58,7 @@ window.form = (function () {
   var saveSuccessHandler = function () {
     window.page.setInactivePageStatus();
     form.reset();
+    window.form.setAddressValue('inactive');
     var successMessage = successMessageTemplate.cloneNode(true);
     mainElement.appendChild(successMessage);
     var OpenedSuccessMessageEscapePressHandler = function (evt) {
