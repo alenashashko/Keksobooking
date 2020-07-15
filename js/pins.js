@@ -3,9 +3,9 @@
 window.pins = (function () {
   var MAX_SIMILAR_ANNOUNCEMENTS_COUNT = 5;
 
-  var MapPinSizes = {
-    WIDTH: 50,
-    HEIGHT: 70
+  var MapPinSize = {
+    HEIGHT: 70,
+    WIDTH: 50
   };
 
   var mapPinTemplate = document.querySelector('#pin')
@@ -15,8 +15,8 @@ window.pins = (function () {
 
   var getUniqueMapPin = function (announcement) {
     var pinElement = mapPinTemplate.cloneNode(true);
-    pinElement.style.left = announcement.location.x - MapPinSizes.WIDTH / 2 + 'px';
-    pinElement.style.top = announcement.location.y - MapPinSizes.HEIGHT + 'px';
+    pinElement.style.left = announcement.location.x - MapPinSize.WIDTH / 2 + 'px';
+    pinElement.style.top = announcement.location.y - MapPinSize.HEIGHT + 'px';
 
     var mapPinImage = pinElement.querySelector('img');
     mapPinImage.src = announcement.author.avatar;

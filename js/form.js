@@ -1,10 +1,10 @@
 'use strict';
 
 window.form = (function () {
-  var MapPinControlSizes = {
-    WIDTH: 65,
+  var MapPinControlSize = {
     HEIGHT: 62,
-    POINTER_HEIGHT: 22
+    POINTER_HEIGHT: 22,
+    WIDTH: 65
   };
 
   var typeOfAccommodation = document.querySelector('#type');
@@ -25,10 +25,10 @@ window.form = (function () {
   var mainElement = document.querySelector('main');
 
   var minPricesOfAccommodation = {
-    'palace': '10000',
+    'bungalo': '0',
     'flat': '1000',
     'house': '5000',
-    'bungalo': '0'
+    'palace': '10000'
   };
 
   var validateMinPrice = function () {
@@ -48,9 +48,9 @@ window.form = (function () {
   var setAddressValue = function (pageStatus) {
     var mapPinControlLeftCoordinate = parseInt(mapPinControl.style.left, 10);
     var mapPinControlTopCoordinate = parseInt(mapPinControl.style.top, 10);
-    var additionToLeftCoordinate = MapPinControlSizes.WIDTH / 2;
-    var additionToTopCoordinate = (pageStatus === 'active') ? (MapPinControlSizes.HEIGHT + MapPinControlSizes.POINTER_HEIGHT) :
-      MapPinControlSizes.HEIGHT / 2;
+    var additionToLeftCoordinate = MapPinControlSize.WIDTH / 2;
+    var additionToTopCoordinate = (pageStatus === 'active') ? (MapPinControlSize.HEIGHT + MapPinControlSize.POINTER_HEIGHT) :
+      MapPinControlSize.HEIGHT / 2;
     addressInput.value = Math.round(mapPinControlLeftCoordinate + additionToLeftCoordinate) + ', ' +
     Math.round(mapPinControlTopCoordinate + additionToTopCoordinate);
   };

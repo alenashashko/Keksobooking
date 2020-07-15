@@ -8,15 +8,15 @@ window.card = (function () {
   var mapFiltersContainer = document.querySelector('.map__filters-container');
   var announcementCard;
 
-  var typesOfAccommodation = {
-    'palace': 'Дворец',
+  var accommodationsListMap = {
+    'bungalo': 'Бунгало',
     'flat': 'Квартира',
     'house': 'Дом',
-    'bungalo': 'Бунгало'
+    'palace': 'Дворец'
   };
 
   var createElement = function (tagName) {
-    var classNames = Array.prototype.slice.call(arguments, [0, 1]);
+    var classNames = Array.prototype.slice.call(arguments, 1);
     var element = document.createElement(tagName);
     for (var i = 0; i < classNames.length; i++) {
       element.classList.add(classNames[i]);
@@ -30,7 +30,7 @@ window.card = (function () {
     cardElement.querySelector('.popup__text--address').textContent = announcement.offer.address;
     cardElement.querySelector('.popup__text--price').textContent = announcement.offer.price + '₽/ночь';
 
-    var offerType = typesOfAccommodation[announcement.offer.type];
+    var offerType = accommodationsListMap[announcement.offer.type];
     cardElement.querySelector('.popup__type').textContent = offerType;
 
     cardElement.querySelector('.popup__text--capacity')
