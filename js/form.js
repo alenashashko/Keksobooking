@@ -16,6 +16,13 @@ window.form = (function () {
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
   var form = document.querySelector('.ad-form');
+  var successMessageTemplate = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+  var errorMessageTemplate = document.querySelector('#error')
+  .content
+  .querySelector('.error');
+  var mainElement = document.querySelector('main');
 
   var minPricesOfAccommodation = {
     'palace': '10000',
@@ -50,6 +57,49 @@ window.form = (function () {
 
   var saveSuccessHandler = function () {
     window.page.setInactivePageStatus();
+    form.reset();
+    var successMessage = successMessageTemplate.cloneNode(true);
+    mainElement.appendChild(successMessage);
+    var OpenedSuccessMessageEscapePressHandler = function (evt) {
+      // написала обработчик внутри функции, так как в нем используется successMessage локальная переменная - так нормально?
+      if (window.util.isEscapeEvent(evt)) {
+        evt.preventDefault();
+        successMessage.remove();
+        document.removeEventListener('keydown', OpenedSuccessMessageEscapePressHandler);
+      }
+    };
+    successMessage.addEventListener('click', function (evt) {
+      if (evt.target === successMessage) {
+        successMessage.remove();
+        document.removeEventListener('keydown', OpenedSuccessMessageEscapePressHandler);
+      }
+    });
+    document.addEventListener('keydown', OpenedSuccessMessageEscapePressHandler);
+  };
+
+  var saveErrorHandler = function () {
+    var errorMessage = errorMessageTemplate.cloneNode(true);
+    var errorButton = errorMessage.querySelector('.error__button');
+    mainElement.appendChild(errorMessage);
+    var OpenedErrorMessageEscapePressHandler = function (evt) {
+      // написала обработчик внутри функции, так как в нем используется errorMessage локальная переменная - так нормально?
+      if (window.util.isEscapeEvent(evt)) {
+        evt.preventDefault();
+        errorMessage.remove();
+        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+      }
+    };
+    errorButton.addEventListener('click', function () {
+      errorMessage.remove();
+      document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+    });
+    errorMessage.addEventListener('click', function (evt) {
+      if (evt.target === errorMessage) {
+        errorMessage.remove();
+        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+      }
+    });
+    document.addEventListener('keydown', OpenedErrorMessageEscapePressHandler);
   };
 
   typeOfAccommodation.addEventListener('change', function () {
@@ -74,9 +124,7 @@ window.form = (function () {
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.saveData(function () {
-      saveSuccessHandler();
-    }, window.page.loadErrorHandler, new FormData(form));
+    window.backend.saveData(saveSuccessHandler, saveErrorHandler, new FormData(form));
   });
 
   return {

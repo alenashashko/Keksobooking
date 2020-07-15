@@ -18,6 +18,7 @@ window.page = (function () {
   .content
   .querySelector('.error');
   var mainElement = document.querySelector('main');
+  var form = document.querySelector('.ad-form');
 
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
     for (var i = 0; i < elements.length; i++) {
@@ -62,15 +63,15 @@ window.page = (function () {
     var errorButton = errorMessage.querySelector('.error__button');
     errorMessageText.textContent = message;
     errorButton.addEventListener('click', function () {
-      mainElement.removeChild(errorMessage);
-    });
-    document.addEventListener('keydown', function (evt) {
-      if (window.util.isEscapeEvent(evt)) {
-        evt.preventDefault();
-        mainElement.removeChild(errorMessage);
-      }
+      errorMessage.remove();
     });
     mainElement.appendChild(errorMessage);
+    document.addEventListener('keydown', function (evt) { // как удалять этот обработчик?
+      if (window.util.isEscapeEvent(evt)) {
+        evt.preventDefault();
+        errorMessage.remove();
+      }
+    });
   };
 
   var mapPinControlMousedownHandler = function (evt) {
@@ -91,6 +92,7 @@ window.page = (function () {
 
   announcementFormReset.addEventListener('click', function () {
     setInactivePageStatus();
+    form.reset();
   });
 
   return {

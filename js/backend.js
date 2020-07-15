@@ -5,7 +5,7 @@ window.backend = (function () {
 
   var Url = {
     LOAD: 'https://javascript.pages.academy/keksobooking/data',
-    SAVE: 'https://javascript.pages.academy/keksobooking'
+    SAVE: 'https://javascript.pages.academy/keksobookin'
   };
 
   var StatusCodes = {
