@@ -28,6 +28,6 @@ window.map = (function () {
 
   return {
     closeCard: closeCard,
-    openCard: openCard
+    openCard: openCard,
   };
 })();

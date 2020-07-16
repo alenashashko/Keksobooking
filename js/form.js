@@ -1,10 +1,10 @@
 'use strict';
 
 window.form = (function () {
-  var MapPinControlSizes = {
-    WIDTH: 65,
+  var MapPinControlSize = {
     HEIGHT: 62,
-    POINTER_HEIGHT: 22
+    POINTER_HEIGHT: 22,
+    WIDTH: 65
   };
 
   var typeOfAccommodation = document.querySelector('#type');
@@ -15,13 +15,20 @@ window.form = (function () {
   var addressInput = document.querySelector('#address');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
-  // var form = document.querySelector('.ad-form');
+  var form = document.querySelector('.ad-form');
+  var successMessageTemplate = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+  var errorMessageTemplate = document.querySelector('#error')
+  .content
+  .querySelector('.error');
+  var mainElement = document.querySelector('main');
 
   var minPricesOfAccommodation = {
-    'palace': '10000',
+    'bungalo': '0',
     'flat': '1000',
     'house': '5000',
-    'bungalo': '0'
+    'palace': '10000'
   };
 
   var validateMinPrice = function () {
@@ -41,11 +48,59 @@ window.form = (function () {
   var setAddressValue = function (pageStatus) {
     var mapPinControlLeftCoordinate = parseInt(mapPinControl.style.left, 10);
     var mapPinControlTopCoordinate = parseInt(mapPinControl.style.top, 10);
-    var additionToLeftCoordinate = MapPinControlSizes.WIDTH / 2;
-    var additionToTopCoordinate = (pageStatus === 'active') ? (MapPinControlSizes.HEIGHT + MapPinControlSizes.POINTER_HEIGHT) :
-      MapPinControlSizes.HEIGHT / 2;
+    var additionToLeftCoordinate = MapPinControlSize.WIDTH / 2;
+    var additionToTopCoordinate = (pageStatus === 'active') ? (MapPinControlSize.HEIGHT + MapPinControlSize.POINTER_HEIGHT) :
+      MapPinControlSize.HEIGHT / 2;
     addressInput.value = Math.round(mapPinControlLeftCoordinate + additionToLeftCoordinate) + ', ' +
     Math.round(mapPinControlTopCoordinate + additionToTopCoordinate);
+  };
+
+  var saveSuccessHandler = function () {
+    window.page.setInactivePageStatus();
+    form.reset();
+    window.form.setAddressValue('inactive');
+    var successMessage = successMessageTemplate.cloneNode(true);
+    mainElement.appendChild(successMessage);
+    var OpenedSuccessMessageEscapePressHandler = function (evt) {
+      // написала обработчик внутри функции, так как в нем используется successMessage локальная переменная - так нормально?
+      if (window.util.isEscapeEvent(evt)) {
+        evt.preventDefault();
+        successMessage.remove();
+        document.removeEventListener('keydown', OpenedSuccessMessageEscapePressHandler);
+      }
+    };
+    successMessage.addEventListener('click', function (evt) {
+      if (evt.target === successMessage) {
+        successMessage.remove();
+        document.removeEventListener('keydown', OpenedSuccessMessageEscapePressHandler);
+      }
+    });
+    document.addEventListener('keydown', OpenedSuccessMessageEscapePressHandler);
+  };
+
+  var saveErrorHandler = function () {
+    var errorMessage = errorMessageTemplate.cloneNode(true);
+    var errorButton = errorMessage.querySelector('.error__button');
+    mainElement.appendChild(errorMessage);
+    var OpenedErrorMessageEscapePressHandler = function (evt) {
+      // написала обработчик внутри функции, так как в нем используется errorMessage локальная переменная - так нормально?
+      if (window.util.isEscapeEvent(evt)) {
+        evt.preventDefault();
+        errorMessage.remove();
+        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+      }
+    };
+    errorButton.addEventListener('click', function () {
+      errorMessage.remove();
+      document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+    });
+    errorMessage.addEventListener('click', function (evt) {
+      if (evt.target === errorMessage) {
+        errorMessage.remove();
+        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+      }
+    });
+    document.addEventListener('keydown', OpenedErrorMessageEscapePressHandler);
   };
 
   typeOfAccommodation.addEventListener('change', function () {
@@ -68,10 +123,10 @@ window.form = (function () {
     timeIn.value = timeOut.value;
   });
 
-  // form.addEventListener('submit', function (evt) {
-  //   evt.preventDefault();
-  //   saveData(new FormData(form));
-  // });
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.saveData(saveSuccessHandler, saveErrorHandler, new FormData(form));
+  });
 
   return {
     validateMinPrice: validateMinPrice,

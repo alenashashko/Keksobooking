@@ -18,6 +18,7 @@ window.page = (function () {
   .content
   .querySelector('.error');
   var mainElement = document.querySelector('main');
+  var form = document.querySelector('.ad-form');
 
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
     for (var i = 0; i < elements.length; i++) {
@@ -45,34 +46,43 @@ window.page = (function () {
       mapPins[i].remove();
     }
     window.map.closeCard();
-    window.backend.loadData(successHandler, errorHandler);
-    //  оставила вызов функции loadData только здесь и убрала из загрузки,
-    // так как эта функция вызывается при событии загрузки страницы
+    window.backend.loadData(loadSuccessHandler, loadErrorHandler);
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
     mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
     mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
   };
 
-  var successHandler = function (data) {
+  var loadSuccessHandler = function (data) {
     announcements = data;
   };
 
-  var errorHandler = function (message) {
+  var loadErrorHandler = function (message) {
     var errorMessage = errorMessageTemplate.cloneNode(true);
     var errorMessageText = errorMessage.querySelector('.error__message');
     var errorButton = errorMessage.querySelector('.error__button');
     errorMessageText.textContent = message;
-    errorButton.addEventListener('click', function () {
-      mainElement.removeChild(errorMessage);
-    });
-    document.addEventListener('keydown', function (evt) {
+    mainElement.appendChild(errorMessage);
+    var OpenedErrorMessageEscapePressHandler = function (evt) {
+      // написала обработчик внутри функции, так как в нем используется errorMessage локальная переменная - так нормально?
       if (window.util.isEscapeEvent(evt)) {
         evt.preventDefault();
-        mainElement.removeChild(errorMessage);
+        errorMessage.remove();
+        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+      }
+    };
+    errorButton.addEventListener('click', function () {
+      errorMessage.remove();
+      setInactivePageStatus();
+      document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+    });
+    errorMessage.addEventListener('click', function (evt) {
+      if (evt.target === errorMessage) {
+        errorMessage.remove();
+        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
       }
     });
-    mainElement.appendChild(errorMessage);
+    document.addEventListener('keydown', OpenedErrorMessageEscapePressHandler);
   };
 
   var mapPinControlMousedownHandler = function (evt) {
@@ -93,6 +103,8 @@ window.page = (function () {
 
   announcementFormReset.addEventListener('click', function () {
     setInactivePageStatus();
+    form.reset();
+    window.form.setAddressValue('inactive');
   });
 
   return {
