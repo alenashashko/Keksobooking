@@ -31,6 +31,53 @@ window.form = (function () {
     'palace': '10000'
   };
 
+  var saveHandler = {
+    success: function () {
+      window.page.setInactivePageStatus();
+      form.reset();
+      window.form.setAddressValue('inactive');
+      var successMessage = successMessageTemplate.cloneNode(true);
+      mainElement.appendChild(successMessage);
+      var openedSuccessMessageEscapePressHandler = function (evt) {
+        if (window.util.isEscapeEvent(evt)) {
+          evt.preventDefault();
+          successMessage.remove();
+          document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
+        }
+      };
+      successMessage.addEventListener('click', function (evt) {
+        if (evt.target === successMessage) {
+          successMessage.remove();
+          document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
+        }
+      });
+      document.addEventListener('keydown', openedSuccessMessageEscapePressHandler);
+    },
+    error: function () {
+      var errorMessage = errorMessageTemplate.cloneNode(true);
+      var errorButton = errorMessage.querySelector('.error__button');
+      mainElement.appendChild(errorMessage);
+      var openedErrorMessageEscapePressHandler = function (evt) {
+        if (window.util.isEscapeEvent(evt)) {
+          evt.preventDefault();
+          errorMessage.remove();
+          document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
+        }
+      };
+      errorButton.addEventListener('click', function () {
+        errorMessage.remove();
+        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
+      });
+      errorMessage.addEventListener('click', function (evt) {
+        if (evt.target === errorMessage) {
+          errorMessage.remove();
+          document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
+        }
+      });
+      document.addEventListener('keydown', openedErrorMessageEscapePressHandler);
+    }
+  };
+
   var validateMinPrice = function () {
     priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
   };
@@ -55,52 +102,6 @@ window.form = (function () {
     Math.round(mapPinControlTopCoordinate + additionToTopCoordinate);
   };
 
-  var saveSuccessHandler = function () {
-    window.page.setInactivePageStatus();
-    form.reset();
-    window.form.setAddressValue('inactive');
-    var successMessage = successMessageTemplate.cloneNode(true);
-    mainElement.appendChild(successMessage);
-    var openedSuccessMessageEscapePressHandler = function (evt) {
-      if (window.util.isEscapeEvent(evt)) {
-        evt.preventDefault();
-        successMessage.remove();
-        document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
-      }
-    };
-    successMessage.addEventListener('click', function (evt) {
-      if (evt.target === successMessage) {
-        successMessage.remove();
-        document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
-      }
-    });
-    document.addEventListener('keydown', openedSuccessMessageEscapePressHandler);
-  };
-
-  var saveErrorHandler = function () {
-    var errorMessage = errorMessageTemplate.cloneNode(true);
-    var errorButton = errorMessage.querySelector('.error__button');
-    mainElement.appendChild(errorMessage);
-    var openedErrorMessageEscapePressHandler = function (evt) {
-      if (window.util.isEscapeEvent(evt)) {
-        evt.preventDefault();
-        errorMessage.remove();
-        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
-      }
-    };
-    errorButton.addEventListener('click', function () {
-      errorMessage.remove();
-      document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
-    });
-    errorMessage.addEventListener('click', function (evt) {
-      if (evt.target === errorMessage) {
-        errorMessage.remove();
-        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
-      }
-    });
-    document.addEventListener('keydown', openedErrorMessageEscapePressHandler);
-  };
-
   typeOfAccommodation.addEventListener('change', function () {
     validateMinPrice();
   });
@@ -123,7 +124,7 @@ window.form = (function () {
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.saveData(saveSuccessHandler, saveErrorHandler, new FormData(form));
+    window.backend.saveData(saveHandler.success, saveHandler.error, new FormData(form));
   });
 
   return {

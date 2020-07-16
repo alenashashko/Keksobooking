@@ -20,6 +20,38 @@ window.page = (function () {
   var mainElement = document.querySelector('main');
   var form = document.querySelector('.ad-form');
 
+  var loadHandler = {
+    success: function (data) {
+      announcements = data;
+    },
+    error: function (message) {
+      var errorMessage = errorMessageTemplate.cloneNode(true);
+      var errorMessageText = errorMessage.querySelector('.error__message');
+      var errorButton = errorMessage.querySelector('.error__button');
+      errorMessageText.textContent = message;
+      mainElement.appendChild(errorMessage);
+      var openedErrorMessageEscapePressHandler = function (evt) {
+        if (window.util.isEscapeEvent(evt)) {
+          evt.preventDefault();
+          errorMessage.remove();
+          document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
+        }
+      };
+      errorButton.addEventListener('click', function () {
+        errorMessage.remove();
+        setInactivePageStatus();
+        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
+      });
+      errorMessage.addEventListener('click', function (evt) {
+        if (evt.target === errorMessage) {
+          errorMessage.remove();
+          document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
+        }
+      });
+      document.addEventListener('keydown', openedErrorMessageEscapePressHandler);
+    }
+  };
+
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
     for (var i = 0; i < elements.length; i++) {
       elements[i].disabled = isDisabled;
@@ -46,42 +78,11 @@ window.page = (function () {
       mapPins[i].remove();
     }
     window.map.closeCard();
-    window.backend.loadData(loadSuccessHandler, loadErrorHandler);
+    window.backend.loadData(loadHandler.success, loadHandler.error);
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
     mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
     mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
-  };
-
-  var loadSuccessHandler = function (data) {
-    announcements = data;
-  };
-
-  var loadErrorHandler = function (message) {
-    var errorMessage = errorMessageTemplate.cloneNode(true);
-    var errorMessageText = errorMessage.querySelector('.error__message');
-    var errorButton = errorMessage.querySelector('.error__button');
-    errorMessageText.textContent = message;
-    mainElement.appendChild(errorMessage);
-    var openedErrorMessageEscapePressHandler = function (evt) {
-      if (window.util.isEscapeEvent(evt)) {
-        evt.preventDefault();
-        errorMessage.remove();
-        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
-      }
-    };
-    errorButton.addEventListener('click', function () {
-      errorMessage.remove();
-      setInactivePageStatus();
-      document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
-    });
-    errorMessage.addEventListener('click', function (evt) {
-      if (evt.target === errorMessage) {
-        errorMessage.remove();
-        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
-      }
-    });
-    document.addEventListener('keydown', openedErrorMessageEscapePressHandler);
   };
 
   var mapPinControlMousedownHandler = function (evt) {
