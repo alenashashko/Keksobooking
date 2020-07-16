@@ -38,14 +38,12 @@
   };
 
   var mouseMoveHandler = function (moveEvt) {
-    moveEvt.preventDefault();
     wasMapPinControlMoved = true;
 
     movePinControl(moveEvt);
   };
 
   var mouseUpHandler = function (upEvt) {
-    upEvt.preventDefault();
     if (wasMapPinControlMoved) {
       movePinControl(upEvt);
     }
@@ -55,7 +53,6 @@
   };
 
   mapPinControl.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
     if (window.util.isMouseLeftButtonEvent(evt)) {
       mapData = map.getBoundingClientRect();
       mouseOffsetX = evt.clientX - mapData.left - mapPinControl.offsetLeft;
