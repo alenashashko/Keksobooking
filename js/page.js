@@ -63,26 +63,25 @@ window.page = (function () {
     var errorButton = errorMessage.querySelector('.error__button');
     errorMessageText.textContent = message;
     mainElement.appendChild(errorMessage);
-    var OpenedErrorMessageEscapePressHandler = function (evt) {
-      // написала обработчик внутри функции, так как в нем используется errorMessage локальная переменная - так нормально?
+    var openedErrorMessageEscapePressHandler = function (evt) {
       if (window.util.isEscapeEvent(evt)) {
         evt.preventDefault();
         errorMessage.remove();
-        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
       }
     };
     errorButton.addEventListener('click', function () {
       errorMessage.remove();
       setInactivePageStatus();
-      document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+      document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
     });
     errorMessage.addEventListener('click', function (evt) {
       if (evt.target === errorMessage) {
         errorMessage.remove();
-        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
       }
     });
-    document.addEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+    document.addEventListener('keydown', openedErrorMessageEscapePressHandler);
   };
 
   var mapPinControlMousedownHandler = function (evt) {

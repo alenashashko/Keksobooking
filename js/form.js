@@ -61,46 +61,44 @@ window.form = (function () {
     window.form.setAddressValue('inactive');
     var successMessage = successMessageTemplate.cloneNode(true);
     mainElement.appendChild(successMessage);
-    var OpenedSuccessMessageEscapePressHandler = function (evt) {
-      // написала обработчик внутри функции, так как в нем используется successMessage локальная переменная - так нормально?
+    var openedSuccessMessageEscapePressHandler = function (evt) {
       if (window.util.isEscapeEvent(evt)) {
         evt.preventDefault();
         successMessage.remove();
-        document.removeEventListener('keydown', OpenedSuccessMessageEscapePressHandler);
+        document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
       }
     };
     successMessage.addEventListener('click', function (evt) {
       if (evt.target === successMessage) {
         successMessage.remove();
-        document.removeEventListener('keydown', OpenedSuccessMessageEscapePressHandler);
+        document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
       }
     });
-    document.addEventListener('keydown', OpenedSuccessMessageEscapePressHandler);
+    document.addEventListener('keydown', openedSuccessMessageEscapePressHandler);
   };
 
   var saveErrorHandler = function () {
     var errorMessage = errorMessageTemplate.cloneNode(true);
     var errorButton = errorMessage.querySelector('.error__button');
     mainElement.appendChild(errorMessage);
-    var OpenedErrorMessageEscapePressHandler = function (evt) {
-      // написала обработчик внутри функции, так как в нем используется errorMessage локальная переменная - так нормально?
+    var openedErrorMessageEscapePressHandler = function (evt) {
       if (window.util.isEscapeEvent(evt)) {
         evt.preventDefault();
         errorMessage.remove();
-        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
       }
     };
     errorButton.addEventListener('click', function () {
       errorMessage.remove();
-      document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+      document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
     });
     errorMessage.addEventListener('click', function (evt) {
       if (evt.target === errorMessage) {
         errorMessage.remove();
-        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+        document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
       }
     });
-    document.addEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+    document.addEventListener('keydown', openedErrorMessageEscapePressHandler);
   };
 
   typeOfAccommodation.addEventListener('change', function () {
