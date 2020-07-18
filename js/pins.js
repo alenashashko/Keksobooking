@@ -44,7 +44,7 @@ window.pins = (function () {
 
   var filterByTypeOfAccommodation = function (selectedType) { // удаление
     mapPinsList.innerHTML = '';
-    drawMapPins(window.page.announcements().filter(function (it) {
+    drawMapPins(window.map.announcements().filter(function (it) {
       return it.offer.type === selectedType;
     }));
   };

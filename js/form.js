@@ -16,6 +16,7 @@ window.form = (function () {
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
   var form = document.querySelector('.ad-form');
+  var announcementFormReset = document.querySelector('.ad-form__reset');
   var successMessageTemplate = document.querySelector('#success')
     .content
     .querySelector('.success');
@@ -125,6 +126,12 @@ window.form = (function () {
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
     window.backend.saveData(save.successHandler, save.errorHandler, new FormData(form));
+  });
+
+  announcementFormReset.addEventListener('click', function () {
+    window.page.setInactivePageStatus();
+    form.reset();
+    setAddressValue('inactive');
   });
 
   return {
