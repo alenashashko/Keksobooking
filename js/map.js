@@ -1,6 +1,8 @@
 'use strict';
 
 window.map = (function () {
+  var typeOfAccommodationFilter = document.querySelector('#housing-type');
+
   var openCard = function (announcement) {
     window.card.createUniqueAnnouncementCard(announcement);
     document.addEventListener('keydown', openedCardEscPressHandler);
@@ -25,6 +27,10 @@ window.map = (function () {
       closeCard();
     }
   };
+
+  typeOfAccommodationFilter.addEventListener('change', function () {
+    window.pins.filterByTypeOfAccommodation(typeOfAccommodationFilter.value);
+  });
 
   return {
     closeCard: closeCard,

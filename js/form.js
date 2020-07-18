@@ -1,7 +1,7 @@
 'use strict';
 
 window.form = (function () {
-  var MapPinControlSize = {
+  var MainPinSize = {
     HEIGHT: 62,
     POINTER_HEIGHT: 22,
     WIDTH: 65
@@ -11,7 +11,7 @@ window.form = (function () {
   var priceOfAccommodation = document.querySelector('#price');
   var numberOfRooms = document.querySelector('#room_number');
   var numberOfGuests = document.querySelector('#capacity');
-  var mapPinControl = document.querySelector('.map__pin--main');
+  var mainPin = document.querySelector('.map__pin--main');
   var addressInput = document.querySelector('#address');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
@@ -31,8 +31,8 @@ window.form = (function () {
     'palace': '10000'
   };
 
-  var saveHandler = {
-    success: function () {
+  var save = {
+    successHandler: function () {
       window.page.setInactivePageStatus();
       form.reset();
       window.form.setAddressValue('inactive');
@@ -53,7 +53,7 @@ window.form = (function () {
       });
       document.addEventListener('keydown', openedSuccessMessageEscapePressHandler);
     },
-    error: function () {
+    errorHandler: function () {
       var errorMessage = errorMessageTemplate.cloneNode(true);
       var errorButton = errorMessage.querySelector('.error__button');
       mainElement.appendChild(errorMessage);
@@ -93,13 +93,13 @@ window.form = (function () {
   };
 
   var setAddressValue = function (pageStatus) {
-    var mapPinControlLeftCoordinate = parseInt(mapPinControl.style.left, 10);
-    var mapPinControlTopCoordinate = parseInt(mapPinControl.style.top, 10);
-    var additionToLeftCoordinate = MapPinControlSize.WIDTH / 2;
-    var additionToTopCoordinate = (pageStatus === 'active') ? (MapPinControlSize.HEIGHT + MapPinControlSize.POINTER_HEIGHT) :
-      MapPinControlSize.HEIGHT / 2;
-    addressInput.value = Math.round(mapPinControlLeftCoordinate + additionToLeftCoordinate) + ', ' +
-    Math.round(mapPinControlTopCoordinate + additionToTopCoordinate);
+    var mainPinLeftCoordinate = parseInt(mainPin.style.left, 10);
+    var mainPinTopCoordinate = parseInt(mainPin.style.top, 10);
+    var additionToLeftCoordinate = MainPinSize.WIDTH / 2;
+    var additionToTopCoordinate = (pageStatus === 'active') ? (MainPinSize.HEIGHT + MainPinSize.POINTER_HEIGHT) :
+      MainPinSize.HEIGHT / 2;
+    addressInput.value = Math.round(mainPinLeftCoordinate + additionToLeftCoordinate) + ', ' +
+    Math.round(mainPinTopCoordinate + additionToTopCoordinate);
   };
 
   typeOfAccommodation.addEventListener('change', function () {
@@ -124,7 +124,7 @@ window.form = (function () {
 
   form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.saveData(saveHandler.success, saveHandler.error, new FormData(form));
+    window.backend.saveData(save.successHandler, save.errorHandler, new FormData(form));
   });
 
   return {
