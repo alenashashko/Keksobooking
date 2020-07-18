@@ -97,18 +97,42 @@ window.card = (function () {
     map.insertBefore(cardElement, mapFiltersContainer);
   };
 
+  var openCard = function (announcement) {
+    createUniqueAnnouncementCard(announcement);
+
+    var cardCLoseButton = document.querySelector('.popup__close');
+
+    document.addEventListener('keydown', openedCardEscPressHandler);
+
+    cardCLoseButton.addEventListener('click', function () {
+      closeCard();
+    });
+  };
+
+  var closeCard = function () {
+    if (announcementCard) {
+      announcementCard.remove();
+      announcementCard = null;
+    }
+
+    document.removeEventListener('keydown', openedCardEscPressHandler);
+  };
+
+  var openedCardEscPressHandler = function (evt) {
+    if (window.util.isEscapeEvent(evt)) {
+      evt.preventDefault();
+      closeCard();
+    }
+  };
+
   var getAnnouncementCard = function () {
     return announcementCard;
   };
 
-  var setEmptyAnnouncementCard = function () {
-    announcementCard = null;
-  };
-
   return {
     createUniqueAnnouncementCard: createUniqueAnnouncementCard,
-    getAnnouncementCard: getAnnouncementCard,
-    setEmptyAnnouncementCard: setEmptyAnnouncementCard
+    closeCard: closeCard,
+    openCard: openCard,
+    getAnnouncementCard: getAnnouncementCard
   };
-
 })();
