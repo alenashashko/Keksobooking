@@ -34,11 +34,13 @@ window.form = (function () {
 
   var save = {
     successHandler: function () {
+      var successMessage = successMessageTemplate.cloneNode(true);
+
       window.page.setInactivePageStatus();
       form.reset();
       window.form.setAddressValue('inactive');
-      var successMessage = successMessageTemplate.cloneNode(true);
       mainElement.appendChild(successMessage);
+
       var openedSuccessMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {
           evt.preventDefault();
@@ -46,18 +48,22 @@ window.form = (function () {
           document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
         }
       };
+
       successMessage.addEventListener('click', function (evt) {
         if (evt.target === successMessage) {
           successMessage.remove();
           document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
         }
       });
+
       document.addEventListener('keydown', openedSuccessMessageEscapePressHandler);
     },
     errorHandler: function () {
       var errorMessage = errorMessageTemplate.cloneNode(true);
       var errorButton = errorMessage.querySelector('.error__button');
+
       mainElement.appendChild(errorMessage);
+
       var openedErrorMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {
           evt.preventDefault();
@@ -65,16 +71,19 @@ window.form = (function () {
           document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
         }
       };
+
       errorButton.addEventListener('click', function () {
         errorMessage.remove();
         document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
       });
+
       errorMessage.addEventListener('click', function (evt) {
         if (evt.target === errorMessage) {
           errorMessage.remove();
           document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
         }
       });
+
       document.addEventListener('keydown', openedErrorMessageEscapePressHandler);
     }
   };
@@ -99,8 +108,9 @@ window.form = (function () {
     var additionToLeftCoordinate = MainPinSize.WIDTH / 2;
     var additionToTopCoordinate = (pageStatus === 'active') ? (MainPinSize.HEIGHT + MainPinSize.POINTER_HEIGHT) :
       MainPinSize.HEIGHT / 2;
+
     addressInput.value = Math.round(mainPinLeftCoordinate + additionToLeftCoordinate) + ', ' +
-    Math.round(mainPinTopCoordinate + additionToTopCoordinate);
+      Math.round(mainPinTopCoordinate + additionToTopCoordinate);
   };
 
   typeOfAccommodation.addEventListener('change', function () {

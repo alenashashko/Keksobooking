@@ -20,6 +20,7 @@ window.backend = (function () {
 
     xhr.addEventListener('load', function () {
       var error;
+
       switch (xhr.status) {
         case StatusCode.OK:
           onSucess(xhr.response);
@@ -28,6 +29,7 @@ window.backend = (function () {
         case StatusCode.BAD_REQUEST:
           error = 'Неверный запрос';
           break;
+
         case StatusCode.NOT_FOUND:
           error = 'Ничего не найдено';
           break;
@@ -50,17 +52,20 @@ window.backend = (function () {
     });
 
     xhr.timeout = TIMEOUT_IN_MS;
+
     return xhr;
   };
 
   var loadData = function (onSuccess, onError) {
     var xhr = makeRequest(onSuccess, onError);
+
     xhr.open('GET', Url.LOAD);
     xhr.send();
   };
 
   var saveData = function (onSuccess, onError, data) {
     var xhr = makeRequest(onSuccess, onError);
+
     xhr.open('POST', Url.SAVE);
     xhr.send(data);
   };

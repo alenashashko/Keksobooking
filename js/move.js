@@ -30,9 +30,10 @@
       y: evt.clientY - mapData.top - mouseOffsetY
     };
 
-    mainPin.style.left = getPinControlTipCoords(mainPinCoordsLimit.minX, mainPinCoordsLimit.maxX, mainPinCoords.x + MainPinSize.WIDTH / 2) - Math.round(MainPinSize.WIDTH / 2) + 'px';
-
-    mainPin.style.top = getPinControlTipCoords(mainPinCoordsLimit.minY, mainPinCoordsLimit.maxY, mainPinCoords.y + MainPinSize.TOTAL_HEIGHT) - MainPinSize.TOTAL_HEIGHT + 'px';
+    mainPin.style.left = getPinControlTipCoords(mainPinCoordsLimit.minX, mainPinCoordsLimit.maxX, mainPinCoords.x + MainPinSize.WIDTH / 2)
+     - Math.round(MainPinSize.WIDTH / 2) + 'px';
+    mainPin.style.top = getPinControlTipCoords(mainPinCoordsLimit.minY, mainPinCoordsLimit.maxY, mainPinCoords.y + MainPinSize.TOTAL_HEIGHT)
+     - MainPinSize.TOTAL_HEIGHT + 'px';
 
     window.form.setAddressValue('active');
   };
@@ -57,9 +58,11 @@
       mapData = map.getBoundingClientRect();
       mouseOffsetX = evt.clientX - mapData.left - mainPin.offsetLeft;
       mouseOffsetY = evt.clientY - mapData.top - mainPin.offsetTop;
+
       window.addEventListener('scroll', function () {
         mapData = map.getBoundingClientRect();
       });
+
       document.addEventListener('mousemove', mouseMoveHandler);
       document.addEventListener('mouseup', mouseUpHandler);
     }

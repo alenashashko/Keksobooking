@@ -47,9 +47,12 @@ window.map = (function () {
   };
 
   var openCard = function (announcement) {
-    window.card.createUniqueAnnouncementCard(announcement);
-    document.addEventListener('keydown', openedCardEscPressHandler);
     var cardCLoseButton = document.querySelector('.popup__close');
+
+    window.card.createUniqueAnnouncementCard(announcement);
+
+    document.addEventListener('keydown', openedCardEscPressHandler);
+
     cardCLoseButton.addEventListener('click', function () {
       closeCard();
     });

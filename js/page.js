@@ -24,6 +24,7 @@ window.page = (function () {
     announcementForm.classList.remove('ad-form--disabled');
 
     window.pins.drawMapPins(window.map.announcements());
+
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
     toggleDisabledElementsAttribute(mapFilters, false); // ? при непустом массиве объявлений
