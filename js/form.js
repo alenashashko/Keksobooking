@@ -32,6 +32,31 @@ window.form = (function () {
     'palace': '10000'
   };
 
+  var validateMinPrice = function () {
+    priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
+  };
+
+  var validateGuestsCount = function () { // переделать
+    if ((+numberOfRooms.value >= +numberOfGuests.value) && +numberOfRooms.value !== 100 && +numberOfGuests.value !== 0) {
+      numberOfGuests.setCustomValidity('');
+    } else if (+numberOfRooms.value === 100 && +numberOfGuests.value === 0) {
+      numberOfGuests.setCustomValidity('');
+    } else {
+      numberOfGuests.setCustomValidity('Количество комнат не соответствует количеству гостей');
+    }
+  };
+
+  var setAddressValue = function (pageStatus) {
+    var mainPinLeftCoordinate = parseInt(mainPin.style.left, 10);
+    var mainPinTopCoordinate = parseInt(mainPin.style.top, 10);
+    var additionToLeftCoordinate = MainPinSize.WIDTH / 2;
+    var additionToTopCoordinate = (pageStatus === 'active') ? (MainPinSize.HEIGHT + MainPinSize.POINTER_HEIGHT) :
+      MainPinSize.HEIGHT / 2;
+
+    addressInput.value = Math.round(mainPinLeftCoordinate + additionToLeftCoordinate) + ', ' +
+      Math.round(mainPinTopCoordinate + additionToTopCoordinate);
+  };
+
   var save = {
     successHandler: function () {
       var successMessage = successMessageTemplate.cloneNode(true);
@@ -86,31 +111,6 @@ window.form = (function () {
 
       document.addEventListener('keydown', openedErrorMessageEscapePressHandler);
     }
-  };
-
-  var validateMinPrice = function () {
-    priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
-  };
-
-  var validateGuestsCount = function () { // переделать
-    if ((+numberOfRooms.value >= +numberOfGuests.value) && +numberOfRooms.value !== 100 && +numberOfGuests.value !== 0) {
-      numberOfGuests.setCustomValidity('');
-    } else if (+numberOfRooms.value === 100 && +numberOfGuests.value === 0) {
-      numberOfGuests.setCustomValidity('');
-    } else {
-      numberOfGuests.setCustomValidity('Количество комнат не соответствует количеству гостей');
-    }
-  };
-
-  var setAddressValue = function (pageStatus) {
-    var mainPinLeftCoordinate = parseInt(mainPin.style.left, 10);
-    var mainPinTopCoordinate = parseInt(mainPin.style.top, 10);
-    var additionToLeftCoordinate = MainPinSize.WIDTH / 2;
-    var additionToTopCoordinate = (pageStatus === 'active') ? (MainPinSize.HEIGHT + MainPinSize.POINTER_HEIGHT) :
-      MainPinSize.HEIGHT / 2;
-
-    addressInput.value = Math.round(mainPinLeftCoordinate + additionToLeftCoordinate) + ', ' +
-      Math.round(mainPinTopCoordinate + additionToTopCoordinate);
   };
 
   typeOfAccommodation.addEventListener('change', function () {

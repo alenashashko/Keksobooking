@@ -118,6 +118,10 @@ window.card = (function () {
     document.removeEventListener('keydown', openedCardEscPressHandler);
   };
 
+  var getAnnouncementCard = function () {
+    return announcementCard;
+  };
+
   var openedCardEscPressHandler = function (evt) {
     if (window.util.isEscapeEvent(evt)) {
       evt.preventDefault();
@@ -125,14 +129,10 @@ window.card = (function () {
     }
   };
 
-  var getAnnouncementCard = function () {
-    return announcementCard;
-  };
-
   return {
     createUniqueAnnouncementCard: createUniqueAnnouncementCard,
-    closeCard: closeCard,
     openCard: openCard,
+    closeCard: closeCard,
     getAnnouncementCard: getAnnouncementCard
   };
 })();
