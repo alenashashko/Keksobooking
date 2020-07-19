@@ -31,7 +31,7 @@ window.page = (function () {
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
 
-    window.pins.drawMapPins(window.pins.getAnnouncements());
+    window.pins.drawPins(window.pins.getAnnouncements());
 
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
