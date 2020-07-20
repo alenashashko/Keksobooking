@@ -6,45 +6,73 @@ window.filter = (function () {
   var priceFilter = document.querySelector('#housing-price');
   var numberOfRoomsFilter = document.querySelector('#housing-rooms');
   var numberOfGuestsFilter = document.querySelector('#housing-guests');
+  var featuresFilter = document.querySelector('#housing-features');
+
+  var checkedFeatureValues = [];
 
   var isTypeOfAccommodationMatches = function (pin) {
-    return pin.offer.type === typeOfAccommodationFilter.value;
+    return pin.offer.type === typeOfAccommodationFilter.value || typeOfAccommodationFilter.value === 'any';
   };
 
   var isPriceMatches = function (pin) {
-    return pin.offer.price === priceFilter.value;
+    var priceOfAccommodation;
+
+    if (pin.offer.price < 10000) { // правильно, что это условие проверяется для каждого пина?
+      priceOfAccommodation = 'low';
+    } else if (pin.offer.price >= 10000 && pin.offer.price <= 50000) {
+      priceOfAccommodation = 'middle';
+    } else if (pin.offer.price > 50000) {
+      priceOfAccommodation = 'high';
+    }
+
+    return priceOfAccommodation === priceFilter.value || priceFilter.value === 'any';
   };
 
   var isRoomsNumberMatches = function (pin) {
-    return pin.offer.rooms === numberOfRoomsFilter.value;
+    return pin.offer.rooms === +numberOfRoomsFilter.value || numberOfRoomsFilter.value === 'any';
   };
 
   var isGuestsNumberMatches = function (pin) {
-    return pin.offer.guests === numberOfGuestsFilter.value;
+    return pin.offer.guests === +numberOfGuestsFilter.value || numberOfGuestsFilter.value === 'any';
+  };
+
+  var isFeaturesMatches = function () {
+    // Array.from(checkedFeatureValues).every(function (feature) {
+
+    // });
   };
 
   // фильтр по удобствам и добавить его в if
 
   var filter = function (data) {
     var filteredData = [];
-    data.forEach(function (pin) {
+
+    for (var i = 0; i < data.length; i++) { // использую for вместо forEach, тк нужен break
+      var pin = data[i];
+
       if (isTypeOfAccommodationMatches(pin) && isPriceMatches(pin)
-        && isRoomsNumberMatches(pin) && isGuestsNumberMatches(pin)) {
+        && isRoomsNumberMatches(pin) && isGuestsNumberMatches(pin) && isFeaturesMatches()) {
         filteredData.push(pin);
       }
-    });
+      if (filteredData.length === 5) {
+        break;
+      }
+    }
 
     return filteredData;
-    /* на вход массив и возвращает отфильтрованный, один пин прогоняется в цикле через все фильтры и если он их
-     их прошел, то добавляется в новый массив. Набралось 5 пинов - цикл останавливаем break и return
-     5 пинов
-     логика прогона всех данных через каждый фильтр нарушает критерий
-     при change вызывается drawPins
-     change вешается на общего родителя и при любом изменении фильтра мы вызываем drawPins
-    */
   };
 
   mapFiltersForm.addEventListener('change', function () {
+    checkedFeatureValues = [];
+
+    var checkedFeatures = featuresFilter.querySelectorAll('input[type=checkbox]:checked');
+
+    Array.from(checkedFeatures).forEach(function (feature) {
+      if (checkedFeatureValues.indexOf(feature.value) === -1) {
+        checkedFeatureValues.push(feature.value);
+      }
+    });
+    console.log(checkedFeatureValues);
     window.pins.drawPins(window.pins.getAnnouncements());
   });
 
@@ -52,12 +80,7 @@ window.filter = (function () {
     data: filter
   };
 })();
-
-
-var filterByTypeOfAccommodation = function (selectedType) {
-  window.card.closeCard();
-
-  window.pins.drawMapPins(window.pins.getAnnouncements().filter(function (it) {
-    return it.offer.type === selectedType;
-  }));
-};
+// window.card.closeCard();
+/*
+     логика прогона всех данных через каждый фильтр нарушает критерий
+    */
