@@ -140,6 +140,7 @@ window.form = (function () {
 
   announcementFormReset.addEventListener('click', function () {
     window.page.setInactivePageStatus();
+    window.filter.mapFiltersForm.reset();
     form.reset();
     setAddressValue('inactive');
   });

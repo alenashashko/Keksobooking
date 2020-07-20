@@ -9,21 +9,13 @@ window.page = (function () {
   var map = document.querySelector('.map');
   var announcementForm = document.querySelector('.ad-form');
   var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
-  var mapFiltersForm = document.querySelector('.map__filters');
-  var mapFilters = mapFiltersForm.children;
+  var mapFilters = window.filter.mapFiltersForm.children;
+  var featuresFromMapFilters = document.querySelectorAll('.map__feature');
   var mainPin = document.querySelector('.map__pin--main');
 
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
     for (var i = 0; i < elements.length; i++) {
       elements[i].disabled = isDisabled;
-    }
-  };
-
-  var removePins = function () {
-    var pins = document.querySelectorAll('button.map__pin:not(.map__pin--main)');
-
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].remove();
     }
   };
 
@@ -35,7 +27,17 @@ window.page = (function () {
 
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
-    toggleDisabledElementsAttribute(mapFilters, false); // ? при непустом массиве объявлений
+
+    if (window.pins.getAnnouncements().length > 0) {
+      toggleDisabledElementsAttribute(mapFilters, false);
+
+      Array.from(mapFilters).forEach(function (filter) {
+        filter.style.cursor = 'pointer';
+      });
+      Array.from(featuresFromMapFilters).forEach(function (feature) {
+        feature.style.cursor = 'pointer';
+      });
+    }
   };
 
   var setInactivePageStatus = function () {
@@ -48,11 +50,18 @@ window.page = (function () {
     mainPin.style.left = MainPinStartPosition.LEFT;
 
     window.form.setAddressValue('inactive');
-    removePins();
+    window.pins.removePins();
     window.card.closeCard();
 
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
+
+    Array.from(mapFilters).forEach(function (filter) {
+      filter.style.cursor = 'default';
+    });
+    Array.from(featuresFromMapFilters).forEach(function (feature) {
+      feature.style.cursor = 'default';
+    });
 
     // load new data
     window.backend.loadData(window.pins.load.successHandler, window.pins.load.errorHandler);
@@ -63,7 +72,6 @@ window.page = (function () {
 
   return {
     setActivePageStatus: setActivePageStatus,
-    setInactivePageStatus: setInactivePageStatus,
-    removePins: removePins
+    setInactivePageStatus: setInactivePageStatus
   };
 })();

@@ -71,11 +71,20 @@ window.pins = (function () {
     return pinElement;
   };
 
+  var removePins = function () {
+    var pins = document.querySelectorAll('button.map__pin:not(.map__pin--main)');
+
+    for (var i = 0; i < pins.length; i++) {
+      pins[i].remove();
+    }
+  };
+
   var drawPins = function (data) {
     var filteredData = window.filter.data(data);
     var fragment = document.createDocumentFragment();
+
     // remove current pins
-    window.page.removePins();
+    removePins();
 
     // draw new pins
 
@@ -83,9 +92,6 @@ window.pins = (function () {
       var uniqueMapPin = getUniqueMapPin(pin);
       fragment.appendChild(uniqueMapPin);
     });
-    // if (!data[i].offer) { ???
-    //   continue;
-    // }
 
     mapPinsList.appendChild(fragment);
   };
@@ -96,7 +102,8 @@ window.pins = (function () {
 
   return {
     load: load,
-    drawPins: drawPins,
+    removePins: removePins,
+    drawPins: window.util.debounce(drawPins),
     getAnnouncements: getAnnouncements
   };
 })();
