@@ -1,7 +1,7 @@
 'use strict';
 
 window.page = (function () {
-  var MapPinControlStartPosition = {
+  var MainPinStartPosition = {
     TOP: '375px',
     LEFT: '570px'
   };
@@ -9,16 +9,9 @@ window.page = (function () {
   var map = document.querySelector('.map');
   var announcementForm = document.querySelector('.ad-form');
   var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
-  var mapFiltersForm = document.querySelector('.map__filters');
-  var mapFilters = mapFiltersForm.children;
-  var mapPinControl = document.querySelector('.map__pin--main');
-  var announcementFormReset = document.querySelector('.ad-form__reset');
-  var announcements = [];
-  var errorMessageTemplate = document.querySelector('#error')
-  .content
-  .querySelector('.error');
-  var mainElement = document.querySelector('main');
-  var form = document.querySelector('.ad-form');
+  var mapFilters = window.filter.mapFiltersForm.children;
+  var featuresFromMapFilters = document.querySelectorAll('.map__feature');
+  var mainPin = document.querySelector('.map__pin--main');
 
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
     for (var i = 0; i < elements.length; i++) {
@@ -29,85 +22,56 @@ window.page = (function () {
   var setActivePageStatus = function () {
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
-    window.pins.drawMapPins(announcements);
+
+    window.pins.drawPins(window.pins.getAnnouncements());
+
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
-    toggleDisabledElementsAttribute(mapFilters, false);
+
+    if (window.pins.getAnnouncements().length > 0) {
+      toggleDisabledElementsAttribute(mapFilters, false);
+
+      Array.from(mapFilters).forEach(function (filter) {
+        filter.style.cursor = 'pointer';
+      });
+      Array.from(featuresFromMapFilters).forEach(function (feature) {
+        feature.style.cursor = 'pointer';
+      });
+    }
   };
 
   var setInactivePageStatus = function () {
-    var mapPins = document.querySelectorAll('button.map__pin:not(.map__pin--main)');
+    // clear/reset map and form
+
     map.classList.add('map--faded');
-    mapPinControl.style.top = MapPinControlStartPosition.TOP;
-    mapPinControl.style.left = MapPinControlStartPosition.LEFT;
     announcementForm.classList.add('ad-form--disabled');
+
+    mainPin.style.top = MainPinStartPosition.TOP;
+    mainPin.style.left = MainPinStartPosition.LEFT;
+
     window.form.setAddressValue('inactive');
-    for (var i = 0; i < mapPins.length; i++) {
-      mapPins[i].remove();
-    }
-    window.map.closeCard();
-    window.backend.loadData(loadSuccessHandler, loadErrorHandler);
+    window.pins.removePins();
+    window.card.closeCard();
+
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
-    mapPinControl.addEventListener('mousedown', mapPinControlMousedownHandler);
-    mapPinControl.addEventListener('keydown', mapPinControlEnterPressHandler);
-  };
 
-  var loadSuccessHandler = function (data) {
-    announcements = data;
-  };
-
-  var loadErrorHandler = function (message) {
-    var errorMessage = errorMessageTemplate.cloneNode(true);
-    var errorMessageText = errorMessage.querySelector('.error__message');
-    var errorButton = errorMessage.querySelector('.error__button');
-    errorMessageText.textContent = message;
-    mainElement.appendChild(errorMessage);
-    var OpenedErrorMessageEscapePressHandler = function (evt) {
-      // написала обработчик внутри функции, так как в нем используется errorMessage локальная переменная - так нормально?
-      if (window.util.isEscapeEvent(evt)) {
-        evt.preventDefault();
-        errorMessage.remove();
-        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
-      }
-    };
-    errorButton.addEventListener('click', function () {
-      errorMessage.remove();
-      setInactivePageStatus();
-      document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
+    Array.from(mapFilters).forEach(function (filter) {
+      filter.style.cursor = 'default';
     });
-    errorMessage.addEventListener('click', function (evt) {
-      if (evt.target === errorMessage) {
-        errorMessage.remove();
-        document.removeEventListener('keydown', OpenedErrorMessageEscapePressHandler);
-      }
+    Array.from(featuresFromMapFilters).forEach(function (feature) {
+      feature.style.cursor = 'default';
     });
-    document.addEventListener('keydown', OpenedErrorMessageEscapePressHandler);
-  };
 
-  var mapPinControlMousedownHandler = function (evt) {
-    if (window.util.isMouseLeftButtonEvent(evt)) {
-      setActivePageStatus();
-      mapPinControl.removeEventListener('mousedown', mapPinControlMousedownHandler);
-      mapPinControl.removeEventListener('keydown', mapPinControlEnterPressHandler);
-    }
-  };
+    // load new data
+    window.backend.loadData(window.pins.load.successHandler, window.pins.load.errorHandler);
 
-  var mapPinControlEnterPressHandler = function (evt) {
-    if (window.util.isEnterEvent(evt)) {
-      setActivePageStatus();
-      mapPinControl.removeEventListener('mousedown', mapPinControlMousedownHandler);
-      mapPinControl.removeEventListener('keydown', mapPinControlEnterPressHandler);
-    }
+    // init functions
+    window.map.addHandlersToMainPin();
   };
-
-  announcementFormReset.addEventListener('click', function () {
-    setInactivePageStatus();
-    form.reset();
-    window.form.setAddressValue('inactive');
-  });
 
   return {
+    setActivePageStatus: setActivePageStatus,
     setInactivePageStatus: setInactivePageStatus
   };
 })();

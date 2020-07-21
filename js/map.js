@@ -1,33 +1,33 @@
 'use strict';
 
 window.map = (function () {
-  var openCard = function (announcement) {
-    window.card.createUniqueAnnouncementCard(announcement);
-    document.addEventListener('keydown', openedCardEscPressHandler);
-    var cardCLoseButton = document.querySelector('.popup__close');
-    cardCLoseButton.addEventListener('click', function () {
-      closeCard();
-    });
+  var mainPin = document.querySelector('.map__pin--main');
+
+  var addHandlersToMainPin = function () {
+    mainPin.addEventListener('mousedown', mainPinMousedownHandler);
+    mainPin.addEventListener('keydown', mainPinEnterPressHandler);
   };
 
-  var closeCard = function () {
-    if (window.card.getAnnouncementCard()) {
-      window.card.getAnnouncementCard().remove();
-      window.card.setEmptyAnnouncementCard();
+  var removeHandlersFromMainPin = function () {
+    mainPin.removeEventListener('mousedown', mainPinMousedownHandler);
+    mainPin.removeEventListener('keydown', mainPinEnterPressHandler);
+  };
+
+  var mainPinMousedownHandler = function (evt) {
+    if (window.util.isMouseLeftButtonEvent(evt)) {
+      window.page.setActivePageStatus();
+      removeHandlersFromMainPin();
     }
-
-    document.removeEventListener('keydown', openedCardEscPressHandler);
   };
 
-  var openedCardEscPressHandler = function (evt) {
-    if (window.util.isEscapeEvent(evt)) {
-      evt.preventDefault();
-      closeCard();
+  var mainPinEnterPressHandler = function (evt) {
+    if (window.util.isEnterEvent(evt)) {
+      window.page.setActivePageStatus();
+      removeHandlersFromMainPin();
     }
   };
 
   return {
-    closeCard: closeCard,
-    openCard: openCard,
+    addHandlersToMainPin: addHandlersToMainPin
   };
 })();
