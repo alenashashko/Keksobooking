@@ -2,7 +2,7 @@
 
 (function () {
   var windowLoadHandler = function () {
-    window.page.setInactivePageStatus();
+    window.page.setInactiveStatus();
     window.form.validateMinPrice();
     window.form.validateGuestsQuantity();
   };

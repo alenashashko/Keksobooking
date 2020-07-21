@@ -144,8 +144,8 @@ window.form = (function () {
   });
 
   announcementFormReset.addEventListener('click', function () {
-    window.page.setInactivePageStatus();
-    window.filter.mapFiltersForm.reset();
+    window.page.setInactiveStatus();
+    window.filter.mapForm.reset();
     announcementForm.reset();
     setAddressValue('inactive');
   });

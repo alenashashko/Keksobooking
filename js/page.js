@@ -9,7 +9,7 @@ window.page = (function () {
   var map = document.querySelector('.map');
   var announcementForm = document.querySelector('.ad-form');
   var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
-  var mapFilters = window.filter.mapFiltersForm.children;
+  var mapFilters = window.filter.mapForm.children;
   var featuresFromMapFilters = document.querySelectorAll('.map__feature');
   var mainPin = document.querySelector('.map__pin--main');
 
@@ -23,7 +23,7 @@ window.page = (function () {
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
 
-    window.pins.drawPins(window.pins.getAnnouncements());
+    window.pins.draw(window.pins.getAnnouncements());
 
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
@@ -49,7 +49,7 @@ window.page = (function () {
     mainPin.style.left = MainPinStartPosition.LEFT;
 
     window.form.setAddressValue('inactive');
-    window.pins.removePins();
+    window.pins.remove();
     window.card.close();
 
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);

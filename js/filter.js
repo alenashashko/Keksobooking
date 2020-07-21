@@ -88,7 +88,7 @@ window.filter = (function () {
   mapFiltersForm.addEventListener('change', function () {
     window.card.close();
     findChosenFeatureValues();
-    window.pins.drawPins(window.pins.getAnnouncements());
+    window.pins.draw(window.pins.getAnnouncements());
   });
 
   return {

@@ -15,7 +15,7 @@ window.map = (function () {
 
   var mainPinMousedownHandler = function (evt) {
     if (window.util.isMouseLeftButtonEvent(evt)) {
-      window.page.setActivePageStatus();
+      window.page.setActiveStatus();
       removeHandlersFromMainPin();
     }
   };
