@@ -50,7 +50,7 @@ window.page = (function () {
 
     window.form.setAddressValue('inactive');
     window.pins.removePins();
-    window.card.closeCard();
+    window.card.close();
 
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
@@ -70,7 +70,7 @@ window.page = (function () {
   };
 
   return {
-    setActivePageStatus: setActivePageStatus,
-    setInactivePageStatus: setInactivePageStatus
+    setActiveStatus: setActivePageStatus,
+    setInactiveStatus: setInactivePageStatus
   };
 })();

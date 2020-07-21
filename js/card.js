@@ -8,7 +8,7 @@ window.card = (function () {
   var mapFiltersContainerElement = document.querySelector('.map__filters-container');
   var announcementCard;
 
-  var accommodationsListMap = {
+  var accommodationTypeListMap = {
     'bungalo': 'Бунгало',
     'flat': 'Квартира',
     'house': 'Дом',
@@ -36,7 +36,7 @@ window.card = (function () {
       + '₽/ночь';
 
     // type of accommodation
-    var offerType = accommodationsListMap[announcement.offer.type];
+    var offerType = accommodationTypeListMap[announcement.offer.type];
 
     cardElement.querySelector('.popup__type').textContent = offerType;
 
@@ -134,9 +134,9 @@ window.card = (function () {
   };
 
   return {
-    createUniqueAnnouncementCard: createUniqueAnnouncementCard,
-    openCard: openCard,
-    closeCard: closeCard,
-    getAnnouncementCard: getAnnouncementCard
+    create: createUniqueAnnouncementCard,
+    open: openCard,
+    close: closeCard,
+    get: getAnnouncementCard
   };
 })();

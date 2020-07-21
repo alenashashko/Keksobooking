@@ -13,11 +13,11 @@
   var mouseOffsetX;
   var mouseOffsetY;
 
-  var mainPinCoordsLimit = {
-    maxX: map.offsetWidth,
-    maxY: 630,
-    minX: 0,
-    minY: 130
+  var mainPinCoordsLimitListMap = {
+    'maxX': map.offsetWidth,
+    'maxY': '630',
+    'minX': '0',
+    'minY': '130'
   };
 
   var getMainPinTipCoords = function (minCoord, maxCoord, currentCoord) {
@@ -30,9 +30,9 @@
       y: evt.clientY - mapData.top - mouseOffsetY
     };
 
-    mainPin.style.left = getMainPinTipCoords(mainPinCoordsLimit.minX, mainPinCoordsLimit.maxX, mainPinCoords.x
+    mainPin.style.left = getMainPinTipCoords(mainPinCoordsLimitListMap.minX, mainPinCoordsLimitListMap.maxX, mainPinCoords.x
       + MainPinSize.WIDTH / 2) - Math.round(MainPinSize.WIDTH / 2) + 'px';
-    mainPin.style.top = getMainPinTipCoords(mainPinCoordsLimit.minY, mainPinCoordsLimit.maxY, mainPinCoords.y
+    mainPin.style.top = getMainPinTipCoords(mainPinCoordsLimitListMap.minY, mainPinCoordsLimitListMap.maxY, mainPinCoords.y
       + MainPinSize.TOTAL_HEIGHT)
      - MainPinSize.TOTAL_HEIGHT + 'px';
 

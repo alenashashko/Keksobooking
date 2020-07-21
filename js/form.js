@@ -27,7 +27,7 @@ window.form = (function () {
     .querySelector('.error');
   var mainElement = document.querySelector('main');
 
-  var minPricesOfAccommodation = {
+  var accommodationTypeToPrice = {
     'bungalo': '0',
     'flat': '1000',
     'house': '5000',
@@ -36,7 +36,7 @@ window.form = (function () {
 
   var validateMinPrice = function () {
     priceOfAccommodationChooser.min = priceOfAccommodationChooser.placeholder
-      = minPricesOfAccommodation[typeOfAccommodationChooser.value];
+      = accommodationTypeToPrice[typeOfAccommodationChooser.value];
   };
 
   var validateGuestsQuantity = function () {

@@ -64,8 +64,8 @@ window.pins = (function () {
     pinImage.alt = announcement.offer.title;
 
     pinElement.addEventListener('click', function () {
-      window.card.closeCard();
-      window.card.openCard(announcement);
+      window.card.close();
+      window.card.open(announcement);
     });
 
     return pinElement;
@@ -101,8 +101,8 @@ window.pins = (function () {
 
   return {
     load: load,
-    removePins: removePins,
-    drawPins: window.util.debounce(drawPins),
+    remove: removePins,
+    draw: window.util.debounce(drawPins),
     getAnnouncements: getAnnouncements
   };
 })();

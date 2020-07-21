@@ -86,13 +86,13 @@ window.filter = (function () {
   };
 
   mapFiltersForm.addEventListener('change', function () {
-    window.card.closeCard();
+    window.card.close();
     findChosenFeatureValues();
     window.pins.drawPins(window.pins.getAnnouncements());
   });
 
   return {
-    mapFiltersForm: mapFiltersForm,
+    mapForm: mapFiltersForm,
     data: getFilteredData
   };
 })();
