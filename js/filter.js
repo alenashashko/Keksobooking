@@ -55,7 +55,7 @@ window.filter = (function () {
   var isFeaturesMatches = function (announcement) {
     var features = announcement.offer.features;
     var isMatching = chosenFeatureValues.every(function (chosenValue) {
-      return features.indexOf(chosenValue) !== -1;
+      return features.includes(chosenValue);
     });
 
     return isMatching;
@@ -64,16 +64,13 @@ window.filter = (function () {
   var getFilteredData = function (data) {
     var filteredData = [];
 
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data.length && filteredData.length < MAX_SIMILAR_ANNOUNCEMENTS_QUANTITY; i++) {
       var announcement = data[i];
 
       if (isTypeOfAccommodationMatches(announcement) && isPriceMatches(announcement)
         && isRoomsQuantityMatches(announcement) && isGuestsQuantityMatches(announcement)
         && isFeaturesMatches(announcement) && announcement.offer) {
         filteredData.push(announcement);
-      }
-      if (filteredData.length === MAX_SIMILAR_ANNOUNCEMENTS_QUANTITY) {
-        break;
       }
     }
 
@@ -83,10 +80,8 @@ window.filter = (function () {
   var findChosenFeatureValues = function () {
     var chosenFeatures = featuresFilter.querySelectorAll('input[type=checkbox]:checked');
 
-    chosenFeatureValues = [];
-
-    Array.from(chosenFeatures).forEach(function (feature) {
-      chosenFeatureValues.push(feature.value);
+    chosenFeatureValues = Array.from(chosenFeatures).map(function (feature) {
+      return feature.value;
     });
   };
 

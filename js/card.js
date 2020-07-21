@@ -19,9 +19,9 @@ window.card = (function () {
     var classNames = Array.prototype.slice.call(arguments, 1);
     var element = document.createElement(tagName);
 
-    for (var i = 0; i < classNames.length; i++) {
-      element.classList.add(classNames[i]);
-    }
+    classNames.forEach(function (it) {
+      element.classList.add(it);
+    });
 
     return element;
   };
@@ -51,34 +51,34 @@ window.card = (function () {
         + announcement.offer.checkout;
 
     // features
-    var offerFeatures = cardElement.querySelector('.popup__features');
+    var offerFeaturesContainerElement = cardElement.querySelector('.popup__features');
     var fragment = document.createDocumentFragment();
+    var features = announcement.offer.features;
 
-    if (announcement.offer.features.length > 0) {
-      for (var i = 0; i < announcement.offer.features.length; i++) {
-        var feature = createElement('li', 'popup__feature', 'popup__feature--' +
-          announcement.offer.features[i]);
+    if (features.length > 0) {
+      features.forEach(function (it) {
+        var feature = createElement('li', 'popup__feature', 'popup__feature--' + it);
         fragment.appendChild(feature);
-      }
+      });
 
-      offerFeatures.innerHTML = '';
-      offerFeatures.appendChild(fragment);
+      offerFeaturesContainerElement.innerHTML = '';
+      offerFeaturesContainerElement.appendChild(fragment);
     } else {
-      offerFeatures.remove();
+      offerFeaturesContainerElement.remove();
     }
 
     // description
-    var offerDescription = cardElement.querySelector('.popup__description');
+    var offerDescriptionContainerElement = cardElement.querySelector('.popup__description');
 
     if (announcement.offer.description.length > 0) {
-      offerDescription.textContent = announcement.offer.description;
+      offerDescriptionContainerElement.textContent = announcement.offer.description;
     } else {
-      offerDescription.remove();
+      offerDescriptionContainerElement.remove();
     }
 
     // photos
-    var offerPhotos = cardElement.querySelector('.popup__photos');
-    var offerPhoto = offerPhotos.querySelector('.popup__photo');
+    var offerPhotosContainerElement = cardElement.querySelector('.popup__photos');
+    var offerPhoto = offerPhotosContainerElement.querySelector('.popup__photo');
 
     if (announcement.offer.photos.length > 0) {
       for (var j = 0; j < announcement.offer.photos.length; j++) {
@@ -88,10 +88,10 @@ window.card = (function () {
         fragment.appendChild(photo);
       }
 
-      offerPhotos.innerHTML = '';
-      offerPhotos.appendChild(fragment);
+      offerPhotosContainerElement.innerHTML = '';
+      offerPhotosContainerElement.appendChild(fragment);
     } else {
-      offerPhotos.remove();
+      offerPhotosContainerElement.remove();
     }
 
     // avatar
