@@ -42,7 +42,6 @@ window.page = (function () {
 
   var setInactivePageStatus = function () {
     // clear/reset map and form
-
     map.classList.add('map--faded');
     announcementForm.classList.add('ad-form--disabled');
 

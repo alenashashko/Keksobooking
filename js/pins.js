@@ -1,20 +1,20 @@
 'use strict';
 
 window.pins = (function () {
-  var MapPinSize = {
+  var PinSize = {
     HEIGHT: 70,
     WIDTH: 50
   };
 
   var announcements = [];
   var errorMessageTemplate = document.querySelector('#error')
-  .content
-  .querySelector('.error');
+    .content
+    .querySelector('.error');
   var mainElement = document.querySelector('main');
   var pinTemplate = document.querySelector('#pin')
-  .content
-  .querySelector('.map__pin');
-  var mapPinsList = document.querySelector('.map__pins');
+    .content
+    .querySelector('.map__pin');
+  var pinsList = document.querySelector('.map__pins');
 
   var load = {
     successHandler: function (data) {
@@ -53,15 +53,15 @@ window.pins = (function () {
     }
   };
 
-  var getUniqueMapPin = function (announcement) {
+  var getUniquePin = function (announcement) {
     var pinElement = pinTemplate.cloneNode(true);
-    var mapPinImage = pinElement.querySelector('img');
+    var pinImage = pinElement.querySelector('img');
 
-    pinElement.style.left = announcement.location.x - MapPinSize.WIDTH / 2 + 'px';
-    pinElement.style.top = announcement.location.y - MapPinSize.HEIGHT + 'px';
+    pinElement.style.left = announcement.location.x - PinSize.WIDTH / 2 + 'px';
+    pinElement.style.top = announcement.location.y - PinSize.HEIGHT + 'px';
 
-    mapPinImage.src = announcement.author.avatar;
-    mapPinImage.alt = announcement.offer.title;
+    pinImage.src = announcement.author.avatar;
+    pinImage.alt = announcement.offer.title;
 
     pinElement.addEventListener('click', function () {
       window.card.closeCard();
@@ -87,13 +87,12 @@ window.pins = (function () {
     removePins();
 
     // draw new pins
-
     filteredData.forEach(function (pin) {
-      var uniqueMapPin = getUniqueMapPin(pin);
-      fragment.appendChild(uniqueMapPin);
+      var uniquePin = getUniquePin(pin);
+      fragment.appendChild(uniquePin);
     });
 
-    mapPinsList.appendChild(fragment);
+    pinsList.appendChild(fragment);
   };
 
   var getAnnouncements = function () {

@@ -5,7 +5,7 @@ window.card = (function () {
   var announcementCardTemplate = document.querySelector('#card')
     .content
     .querySelector('.map__card');
-  var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var mapFiltersContainerElement = document.querySelector('.map__filters-container');
   var announcementCard;
 
   var accommodationsListMap = {
@@ -32,7 +32,8 @@ window.card = (function () {
     // title, address and price
     cardElement.querySelector('.popup__title').textContent = announcement.offer.title;
     cardElement.querySelector('.popup__text--address').textContent = announcement.offer.address;
-    cardElement.querySelector('.popup__text--price').textContent = announcement.offer.price + '₽/ночь';
+    cardElement.querySelector('.popup__text--price').textContent = announcement.offer.price
+      + '₽/ночь';
 
     // type of accommodation
     var offerType = accommodationsListMap[announcement.offer.type];
@@ -41,11 +42,13 @@ window.card = (function () {
 
     // number of guests and rooms
     cardElement.querySelector('.popup__text--capacity')
-      .textContent = announcement.offer.rooms + ' комнаты для ' + announcement.offer.guests + ' гостей';
+      .textContent = announcement.offer.rooms + ' комнаты для ' + announcement.offer.guests
+        + ' гостей';
 
     // check-in and check-out time
     cardElement.querySelector('.popup__text--time')
-      .textContent = 'Заезд после ' + announcement.offer.checkin + ', выезд до ' + announcement.offer.checkout;
+      .textContent = 'Заезд после ' + announcement.offer.checkin + ', выезд до '
+        + announcement.offer.checkout;
 
     // features
     var offerFeatures = cardElement.querySelector('.popup__features');
@@ -53,7 +56,8 @@ window.card = (function () {
 
     if (announcement.offer.features.length > 0) {
       for (var i = 0; i < announcement.offer.features.length; i++) {
-        var feature = createElement('li', 'popup__feature', 'popup__feature--' + announcement.offer.features[i]);
+        var feature = createElement('li', 'popup__feature', 'popup__feature--' +
+          announcement.offer.features[i]);
         fragment.appendChild(feature);
       }
 
@@ -94,7 +98,7 @@ window.card = (function () {
     cardElement.querySelector('.popup__avatar').src = announcement.author.avatar;
 
     announcementCard = cardElement;
-    map.insertBefore(cardElement, mapFiltersContainer);
+    map.insertBefore(cardElement, mapFiltersContainerElement);
   };
 
   var openCard = function (announcement) {
@@ -118,7 +122,7 @@ window.card = (function () {
     document.removeEventListener('keydown', openedCardEscPressHandler);
   };
 
-  var getAnnouncementCard = function () {
+  var getAnnouncementCard = function () { // return current state
     return announcementCard;
   };
 
