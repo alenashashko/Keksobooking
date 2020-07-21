@@ -1,6 +1,8 @@
 'use strict';
 
 window.filter = (function () {
+  var MAX_SIMILAR_ANNOUNCEMENTS_COUNT = 5;
+
   var mapFiltersForm = document.querySelector('.map__filters');
   var typeOfAccommodationFilter = document.querySelector('#housing-type');
   var priceFilter = document.querySelector('#housing-price');
@@ -61,7 +63,7 @@ window.filter = (function () {
         && isFeaturesMatches(announcement) && announcement.offer) { // добавила проверку существования свойства offer сюда - 5.2 ТЗ
         filteredData.push(announcement);
       }
-      if (filteredData.length === 5) {
+      if (filteredData.length === MAX_SIMILAR_ANNOUNCEMENTS_COUNT) {
         break;
       }
     }
