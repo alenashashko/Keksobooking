@@ -22,7 +22,7 @@ window.map = (function () {
 
   var mainPinEnterPressHandler = function (evt) {
     if (window.util.isEnterEvent(evt)) {
-      window.page.setActivePageStatus();
+      window.page.setActiveStatus();
       removeHandlersFromMainPin();
     }
   };
