@@ -14,9 +14,9 @@ window.page = (function () {
   var mainPin = document.querySelector('.map__pin--main');
 
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
-    for (var i = 0; i < elements.length; i++) {
-      elements[i].disabled = isDisabled;
-    }
+    Array.from(elements).forEach(function (it) {
+      it.disabled = isDisabled;
+    });
   };
 
   var setActivePageStatus = function () {

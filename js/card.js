@@ -114,6 +114,9 @@ window.card = (function () {
   };
 
   var closeCard = function () {
+    if (window.pins.active()) {
+      window.pins.active().classList.remove('map__pin--active');
+    }
     if (announcementCard) {
       announcementCard.remove();
       announcementCard = null;
@@ -128,7 +131,6 @@ window.card = (function () {
 
   var openedCardEscPressHandler = function (evt) {
     if (window.util.isEscapeEvent(evt)) {
-      evt.preventDefault();
       closeCard();
     }
   };

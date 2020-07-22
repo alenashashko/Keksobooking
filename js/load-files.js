@@ -24,11 +24,7 @@ window.loadFiles = (function () {
   };
 
   var deleteAccommodationPhoto = function () {
-    var photo = accommodationPhotoContainerElement.querySelector('img');
-
-    if (photo) {
-      photo.remove();
-    }
+    accommodationPhotoContainerElement.innerHTML = '';
   };
 
   avatarChooser.addEventListener('change', function () {

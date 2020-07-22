@@ -75,7 +75,6 @@ window.form = (function () {
 
       var openedSuccessMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {
-          evt.preventDefault();
           successMessage.remove();
           document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
         }
@@ -98,7 +97,6 @@ window.form = (function () {
 
       var openedErrorMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {
-          evt.preventDefault();
           errorMessage.remove();
           document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
         }

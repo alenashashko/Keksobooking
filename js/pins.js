@@ -31,7 +31,6 @@ window.pins = (function () {
 
       var openedErrorMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {
-          evt.preventDefault();
           errorMessage.remove();
           document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
         }
@@ -86,9 +85,9 @@ window.pins = (function () {
   var removePins = function () {
     var pins = document.querySelectorAll('button.map__pin:not(.map__pin--main)');
 
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].remove();
-    }
+    pins.forEach(function (it) {
+      it.remove();
+    });
   };
 
   var drawPins = function (data) {
@@ -107,14 +106,20 @@ window.pins = (function () {
     pinsList.appendChild(fragment);
   };
 
-  var getAnnouncements = function () {
-    return announcements; // return current state
+  var getAnnouncements = function () { // return current state
+    return announcements;
+  };
+
+  var getActivePin = function () { // return current state
+    return activePin;
   };
 
   return {
+    active: getActivePin,
     load: load,
     remove: removePins,
-    draw: window.util.debounce(drawPins),
+    draw: drawPins,
+    drawWithDebounce: window.util.debounce(drawPins),
     getAnnouncements: getAnnouncements
   };
 })();
