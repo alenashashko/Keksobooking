@@ -15,6 +15,7 @@ window.pins = (function () {
     .content
     .querySelector('.map__pin');
   var pinsList = document.querySelector('.map__pins');
+  var activePin;
 
   var load = {
     successHandler: function (data) {
@@ -64,8 +65,19 @@ window.pins = (function () {
     pinImage.alt = announcement.offer.title;
 
     pinElement.addEventListener('click', function () {
+      if (activePin === pinElement) {
+        return;
+      }
+
+      if (activePin) {
+        activePin.classList.remove('map__pin--active');
+      }
+
+      pinElement.classList.add('map__pin--active');
       window.card.close();
       window.card.open(announcement);
+
+      activePin = pinElement;
     });
 
     return pinElement;

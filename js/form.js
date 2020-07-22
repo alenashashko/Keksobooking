@@ -67,6 +67,7 @@ window.form = (function () {
       var successMessage = successMessageTemplate.cloneNode(true);
 
       window.page.setInactiveStatus();
+      window.filter.mapForm.reset();
       announcementForm.reset();
       window.form.setAddressValue('inactive');
       mainElement.appendChild(successMessage);
@@ -137,6 +138,18 @@ window.form = (function () {
   timeOutChooser.addEventListener('change', function () {
     timeInChooser.value = timeOutChooser.value;
   });
+
+  announcementForm.addEventListener('change', function (evt) {
+    if (evt.target.validity.valid) {
+      evt.target.style.border = '';
+    } else {
+      evt.target.style.border = '2px solid red';
+    }
+  });
+
+  announcementForm.addEventListener('invalid', function (evt) {
+    evt.target.style.border = '2px solid red';
+  }, true);
 
   announcementForm.addEventListener('submit', function (evt) {
     evt.preventDefault();

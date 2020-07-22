@@ -6,11 +6,12 @@ window.util = (function () {
 
   var EventKeyCode = {
     ENTER: 'Enter',
+    NUMPAD_ENTER: 'NumpadEnter',
     ESCAPE: 'Escape'
   };
 
   var isEnterEvent = function (evt) {
-    return evt.key === EventKeyCode.ENTER;
+    return evt.key === EventKeyCode.ENTER || evt.key === EventKeyCode.NUMPAD_ENTER;
   };
 
   var isEscapeEvent = function (evt) {
