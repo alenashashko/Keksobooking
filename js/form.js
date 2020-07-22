@@ -66,7 +66,7 @@ window.form = (function () {
     successHandler: function () {
       var successMessage = successMessageTemplate.cloneNode(true);
 
-      window.page.setInactivePageStatus();
+      window.page.setInactiveStatus();
       announcementForm.reset();
       window.form.setAddressValue('inactive');
       mainElement.appendChild(successMessage);

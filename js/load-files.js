@@ -24,12 +24,10 @@ window.loadFiles = (function () {
   };
 
   var deleteAccommodationPhoto = function () {
-    var photos = accommodationPhotoContainerElement.querySelectorAll('img');
+    var photo = accommodationPhotoContainerElement.querySelector('img');
 
-    if (photos) {
-      for (var i = 0; i < photos.length; i++) {
-        photos[i].remove();
-      }
+    if (photo) {
+      photo.remove();
     }
   };
 
@@ -48,26 +46,26 @@ window.loadFiles = (function () {
   });
 
   accommodationPhotoChooser.addEventListener('change', function () {
-    var photos = accommodationPhotoChooser.files;
+    var accommodationPhoto = accommodationPhotoChooser.files[0];
 
-    photos.forEach(function (it) {
-      if (isFileTypeMatches(it)) {
-        var reader = new FileReader();
+    if (isFileTypeMatches(accommodationPhoto)) {
+      var reader = new FileReader();
 
-        reader.addEventListener('load', function () {
-          var photo = document.createElement('img');
-          photo.src = reader.result; // доп стили по необходимости
+      reader.addEventListener('load', function () {
+        var photo = document.createElement('img');
 
-          accommodationPhotoContainerElement.appendChild(photo);
-        });
+        photo.src = reader.result;
+        photo.style.width = '100%';
+        photo.style.height = '100%';
 
-        reader.readAsDataURL(it);
-      }
-    });
+        accommodationPhotoContainerElement.appendChild(photo);
+      });
+
+      reader.readAsDataURL(accommodationPhoto);
+    }
   });
 
   return {
-    accommodationPhotoChooser: accommodationPhotoChooser,
     deleteAvatar: deleteAvatar,
     deleteAccommodationPhoto: deleteAccommodationPhoto
   };

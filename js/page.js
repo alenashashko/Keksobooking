@@ -62,6 +62,9 @@ window.page = (function () {
       feature.style.cursor = 'default';
     });
 
+    window.loadFiles.deleteAvatar();
+    window.loadFiles.deleteAccommodationPhoto();
+
     // load new data
     window.backend.loadData(window.pins.load.successHandler, window.pins.load.errorHandler);
 
