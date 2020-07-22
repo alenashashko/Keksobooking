@@ -26,6 +26,7 @@ window.form = (function () {
     .content
     .querySelector('.error');
   var mainElement = document.querySelector('main');
+  var invalidFields = [];
 
   var accommodationTypeToPrice = {
     'bungalo': '0',
@@ -148,6 +149,7 @@ window.form = (function () {
   });
 
   announcementForm.addEventListener('invalid', function (evt) {
+    invalidFields.push(evt.target);
     evt.target.style.border = '2px solid red';
   }, true);
 
@@ -157,6 +159,10 @@ window.form = (function () {
   });
 
   announcementFormReset.addEventListener('click', function () {
+    invalidFields.forEach(function (it) {
+      it.style.border = '';
+    });
+
     window.page.setInactiveStatus();
     window.filter.mapForm.reset();
     announcementForm.reset();

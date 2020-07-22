@@ -6,15 +6,15 @@ window.pins = (function () {
     WIDTH: 50
   };
 
-  var announcements = [];
   var errorMessageTemplate = document.querySelector('#error')
-    .content
-    .querySelector('.error');
+  .content
+  .querySelector('.error');
   var mainElement = document.querySelector('main');
   var pinTemplate = document.querySelector('#pin')
-    .content
-    .querySelector('.map__pin');
+  .content
+  .querySelector('.map__pin');
   var pinsList = document.querySelector('.map__pins');
+  var announcements = [];
   var activePin;
 
   var load = {
