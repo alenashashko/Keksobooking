@@ -1,11 +1,12 @@
 'use strict';
 
-(function () {
+window.loadFiles = (function () {
   var FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif'];
+  var AVATAR_SRC_DEFAULT = 'img/muffin-grey.svg';
 
   var avatarChooser = document.querySelector('#avatar');
   var avatarPreview = document.querySelector('.ad-form-header__preview img');
-  var accommodationPhotoChooser = document.querySelector('#images'); // + multiple
+  var accommodationPhotoChooser = document.querySelector('#images');
   var accommodationPhotoContainerElement = document.querySelector('.ad-form__photo');
 
   var isFileTypeMatches = function (file) {
@@ -16,6 +17,20 @@
     });
 
     return isMatching;
+  };
+
+  var deleteAvatar = function () {
+    avatarPreview.src = AVATAR_SRC_DEFAULT;
+  };
+
+  var deleteAccommodationPhoto = function () {
+    var photos = accommodationPhotoContainerElement.querySelectorAll('img');
+
+    if (photos) {
+      for (var i = 0; i < photos.length; i++) {
+        photos[i].remove();
+      }
+    }
   };
 
   avatarChooser.addEventListener('change', function () {
@@ -50,4 +65,10 @@
       }
     });
   });
+
+  return {
+    accommodationPhotoChooser: accommodationPhotoChooser,
+    deleteAvatar: deleteAvatar,
+    deleteAccommodationPhoto: deleteAccommodationPhoto
+  };
 })();
