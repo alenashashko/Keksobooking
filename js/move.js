@@ -13,26 +13,27 @@
   var mouseOffsetX;
   var mouseOffsetY;
 
-  var mainPinCoordsLimit = {
-    maxX: map.offsetWidth,
-    maxY: 630,
-    minX: 0,
-    minY: 130
+  var mainPinCoordsLimitListMap = {
+    'maxX': map.offsetWidth,
+    'maxY': '630',
+    'minX': '0',
+    'minY': '130'
   };
 
-  var getPinControlTipCoords = function (minCoord, maxCoord, currentCoord) {
+  var getMainPinTipCoords = function (minCoord, maxCoord, currentCoord) {
     return Math.max(minCoord, Math.min(maxCoord, currentCoord));
   };
 
-  var movePinControl = function (evt) {
+  var moveMainPin = function (evt) {
     var mainPinCoords = {
       x: evt.clientX - mapData.left - mouseOffsetX,
       y: evt.clientY - mapData.top - mouseOffsetY
     };
 
-    mainPin.style.left = getPinControlTipCoords(mainPinCoordsLimit.minX, mainPinCoordsLimit.maxX, mainPinCoords.x + MainPinSize.WIDTH / 2)
-     - Math.round(MainPinSize.WIDTH / 2) + 'px';
-    mainPin.style.top = getPinControlTipCoords(mainPinCoordsLimit.minY, mainPinCoordsLimit.maxY, mainPinCoords.y + MainPinSize.TOTAL_HEIGHT)
+    mainPin.style.left = getMainPinTipCoords(mainPinCoordsLimitListMap.minX, mainPinCoordsLimitListMap.maxX, mainPinCoords.x
+      + MainPinSize.WIDTH / 2) - Math.round(MainPinSize.WIDTH / 2) + 'px';
+    mainPin.style.top = getMainPinTipCoords(mainPinCoordsLimitListMap.minY, mainPinCoordsLimitListMap.maxY, mainPinCoords.y
+      + MainPinSize.TOTAL_HEIGHT)
      - MainPinSize.TOTAL_HEIGHT + 'px';
 
     window.form.setAddressValue('active');
@@ -41,12 +42,12 @@
   var mouseMoveHandler = function (moveEvt) {
     wasMainPinMoved = true;
 
-    movePinControl(moveEvt);
+    moveMainPin(moveEvt);
   };
 
   var mouseUpHandler = function (upEvt) {
     if (wasMainPinMoved) {
-      movePinControl(upEvt);
+      moveMainPin(upEvt);
     }
 
     document.removeEventListener('mousemove', mouseMoveHandler);

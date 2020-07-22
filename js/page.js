@@ -9,21 +9,21 @@ window.page = (function () {
   var map = document.querySelector('.map');
   var announcementForm = document.querySelector('.ad-form');
   var announcementFormFieldsets = announcementForm.querySelectorAll('fieldset');
-  var mapFilters = window.filter.mapFiltersForm.children;
+  var mapFilters = window.filter.mapForm.children;
   var featuresFromMapFilters = document.querySelectorAll('.map__feature');
   var mainPin = document.querySelector('.map__pin--main');
 
   var toggleDisabledElementsAttribute = function (elements, isDisabled) {
-    for (var i = 0; i < elements.length; i++) {
-      elements[i].disabled = isDisabled;
-    }
+    Array.from(elements).forEach(function (it) {
+      it.disabled = isDisabled;
+    });
   };
 
   var setActivePageStatus = function () {
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
 
-    window.pins.drawPins(window.pins.getAnnouncements());
+    window.pins.draw(window.pins.getAnnouncements());
 
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
@@ -42,7 +42,6 @@ window.page = (function () {
 
   var setInactivePageStatus = function () {
     // clear/reset map and form
-
     map.classList.add('map--faded');
     announcementForm.classList.add('ad-form--disabled');
 
@@ -50,8 +49,8 @@ window.page = (function () {
     mainPin.style.left = MainPinStartPosition.LEFT;
 
     window.form.setAddressValue('inactive');
-    window.pins.removePins();
-    window.card.closeCard();
+    window.pins.remove();
+    window.card.close();
 
     toggleDisabledElementsAttribute(announcementFormFieldsets, true);
     toggleDisabledElementsAttribute(mapFilters, true);
@@ -63,6 +62,9 @@ window.page = (function () {
       feature.style.cursor = 'default';
     });
 
+    window.loadFiles.deleteAvatar();
+    window.loadFiles.deleteAccommodationPhoto();
+
     // load new data
     window.backend.loadData(window.pins.load.successHandler, window.pins.load.errorHandler);
 
@@ -71,7 +73,7 @@ window.page = (function () {
   };
 
   return {
-    setActivePageStatus: setActivePageStatus,
-    setInactivePageStatus: setInactivePageStatus
+    setActiveStatus: setActivePageStatus,
+    setInactiveStatus: setInactivePageStatus
   };
 })();

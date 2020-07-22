@@ -1,31 +1,34 @@
 'use strict';
 
 window.form = (function () {
+  var ROOMS_QUANTITY_NOT_FOR_GUESTS = 100;
+
   var MainPinSize = {
     HEIGHT: 62,
     POINTER_HEIGHT: 22,
     WIDTH: 65
   };
 
-  var typeOfAccommodation = document.querySelector('#type');
-  var priceOfAccommodation = document.querySelector('#price');
-  var numberOfRooms = document.querySelector('#room_number');
-  var numberOfGuests = document.querySelector('#capacity');
+  var typeOfAccommodationChooser = document.querySelector('#type');
+  var priceOfAccommodationChooser = document.querySelector('#price');
+  var quantityOfRoomsChooser = document.querySelector('#room_number');
+  var quantityOfGuestsChooser = document.querySelector('#capacity');
   var mainPin = document.querySelector('.map__pin--main');
   var addressInput = document.querySelector('#address');
-  var timeIn = document.querySelector('#timein');
-  var timeOut = document.querySelector('#timeout');
-  var form = document.querySelector('.ad-form');
+  var timeInChooser = document.querySelector('#timein');
+  var timeOutChooser = document.querySelector('#timeout');
+  var announcementForm = document.querySelector('.ad-form');
   var announcementFormReset = document.querySelector('.ad-form__reset');
   var successMessageTemplate = document.querySelector('#success')
     .content
     .querySelector('.success');
   var errorMessageTemplate = document.querySelector('#error')
-  .content
-  .querySelector('.error');
+    .content
+    .querySelector('.error');
   var mainElement = document.querySelector('main');
+  var invalidFields = [];
 
-  var minPricesOfAccommodation = {
+  var accommodationTypeToPrice = {
     'bungalo': '0',
     'flat': '1000',
     'house': '5000',
@@ -33,16 +36,19 @@ window.form = (function () {
   };
 
   var validateMinPrice = function () {
-    priceOfAccommodation.min = priceOfAccommodation.placeholder = minPricesOfAccommodation[typeOfAccommodation.value];
+    priceOfAccommodationChooser.min = priceOfAccommodationChooser.placeholder
+      = accommodationTypeToPrice[typeOfAccommodationChooser.value];
   };
 
-  var validateGuestsCount = function () { // переделать
-    if ((+numberOfRooms.value >= +numberOfGuests.value) && +numberOfRooms.value !== 100 && +numberOfGuests.value !== 0) {
-      numberOfGuests.setCustomValidity('');
-    } else if (+numberOfRooms.value === 100 && +numberOfGuests.value === 0) {
-      numberOfGuests.setCustomValidity('');
+  var validateGuestsQuantity = function () {
+    if ((+quantityOfRoomsChooser.value >= +quantityOfGuestsChooser.value) && +quantityOfRoomsChooser.value
+      !== ROOMS_QUANTITY_NOT_FOR_GUESTS && +quantityOfGuestsChooser.value !== 0) {
+      quantityOfGuestsChooser.setCustomValidity('');
+    } else if (+quantityOfRoomsChooser.value === ROOMS_QUANTITY_NOT_FOR_GUESTS
+        && +quantityOfGuestsChooser.value === 0) {
+      quantityOfGuestsChooser.setCustomValidity('');
     } else {
-      numberOfGuests.setCustomValidity('Количество комнат не соответствует количеству гостей');
+      quantityOfGuestsChooser.setCustomValidity('Количество комнат не соответствует количеству гостей');
     }
   };
 
@@ -50,8 +56,8 @@ window.form = (function () {
     var mainPinLeftCoordinate = parseInt(mainPin.style.left, 10);
     var mainPinTopCoordinate = parseInt(mainPin.style.top, 10);
     var additionToLeftCoordinate = MainPinSize.WIDTH / 2;
-    var additionToTopCoordinate = (pageStatus === 'active') ? (MainPinSize.HEIGHT + MainPinSize.POINTER_HEIGHT) :
-      MainPinSize.HEIGHT / 2;
+    var additionToTopCoordinate = (pageStatus === 'active') ?
+      (MainPinSize.HEIGHT + MainPinSize.POINTER_HEIGHT) : MainPinSize.HEIGHT / 2;
 
     addressInput.value = Math.round(mainPinLeftCoordinate + additionToLeftCoordinate) + ', ' +
       Math.round(mainPinTopCoordinate + additionToTopCoordinate);
@@ -61,14 +67,14 @@ window.form = (function () {
     successHandler: function () {
       var successMessage = successMessageTemplate.cloneNode(true);
 
-      window.page.setInactivePageStatus();
-      form.reset();
+      window.page.setInactiveStatus();
+      window.filter.mapForm.reset();
+      announcementForm.reset();
       window.form.setAddressValue('inactive');
       mainElement.appendChild(successMessage);
 
       var openedSuccessMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {
-          evt.preventDefault();
           successMessage.remove();
           document.removeEventListener('keydown', openedSuccessMessageEscapePressHandler);
         }
@@ -91,7 +97,6 @@ window.form = (function () {
 
       var openedErrorMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {
-          evt.preventDefault();
           errorMessage.remove();
           document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
         }
@@ -113,41 +118,58 @@ window.form = (function () {
     }
   };
 
-  typeOfAccommodation.addEventListener('change', function () {
+  typeOfAccommodationChooser.addEventListener('change', function () {
     validateMinPrice();
   });
 
-  numberOfGuests.addEventListener('change', function () {
-    validateGuestsCount();
+  quantityOfGuestsChooser.addEventListener('change', function () {
+    validateGuestsQuantity();
   });
 
-  numberOfRooms.addEventListener('change', function () {
-    validateGuestsCount();
+  quantityOfRoomsChooser.addEventListener('change', function () {
+    validateGuestsQuantity();
   });
 
-  timeIn.addEventListener('change', function () {
-    timeOut.value = timeIn.value;
+  timeInChooser.addEventListener('change', function () {
+    timeOutChooser.value = timeInChooser.value;
   });
 
-  timeOut.addEventListener('change', function () {
-    timeIn.value = timeOut.value;
+  timeOutChooser.addEventListener('change', function () {
+    timeInChooser.value = timeOutChooser.value;
   });
 
-  form.addEventListener('submit', function (evt) {
+  announcementForm.addEventListener('change', function (evt) {
+    if (evt.target.validity.valid) {
+      evt.target.style.border = '';
+    } else {
+      evt.target.style.border = '2px solid red';
+    }
+  });
+
+  announcementForm.addEventListener('invalid', function (evt) {
+    invalidFields.push(evt.target);
+    evt.target.style.border = '2px solid red';
+  }, true);
+
+  announcementForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.saveData(save.successHandler, save.errorHandler, new FormData(form));
+    window.backend.saveData(save.successHandler, save.errorHandler, new FormData(announcementForm));
   });
 
   announcementFormReset.addEventListener('click', function () {
-    window.page.setInactivePageStatus();
-    window.filter.mapFiltersForm.reset();
-    form.reset();
+    invalidFields.forEach(function (it) {
+      it.style.border = '';
+    });
+
+    window.page.setInactiveStatus();
+    window.filter.mapForm.reset();
+    announcementForm.reset();
     setAddressValue('inactive');
   });
 
   return {
     validateMinPrice: validateMinPrice,
-    validateGuestsCount: validateGuestsCount,
+    validateGuestsQuantity: validateGuestsQuantity,
     setAddressValue: setAddressValue
   };
 })();

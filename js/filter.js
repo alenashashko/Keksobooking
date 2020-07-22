@@ -1,16 +1,21 @@
 'use strict';
 
 window.filter = (function () {
-  var MAX_SIMILAR_ANNOUNCEMENTS_COUNT = 5;
+  var MAX_SIMILAR_ANNOUNCEMENTS_QUANTITY = 5;
+
+  var AveragePriceOfAccommodation = {
+    MIN: 10000,
+    MAX: 50000
+  };
 
   var mapFiltersForm = document.querySelector('.map__filters');
   var typeOfAccommodationFilter = document.querySelector('#housing-type');
   var priceFilter = document.querySelector('#housing-price');
-  var numberOfRoomsFilter = document.querySelector('#housing-rooms');
-  var numberOfGuestsFilter = document.querySelector('#housing-guests');
+  var quantityOfRoomsFilter = document.querySelector('#housing-rooms');
+  var quantityOfGuestsFilter = document.querySelector('#housing-guests');
   var featuresFilter = document.querySelector('#housing-features');
 
-  var checkedFeatureValues = [];
+  var chosenFeatureValues = [];
 
   var isTypeOfAccommodationMatches = function (announcement) {
     return announcement.offer.type === typeOfAccommodationFilter.value
@@ -20,11 +25,12 @@ window.filter = (function () {
   var getPriceOfAccommodationInText = function (announcement) {
     var priceOfAccommodation;
 
-    if (announcement.offer.price < 10000) {
+    if (announcement.offer.price < AveragePriceOfAccommodation.MIN) {
       priceOfAccommodation = 'low';
-    } else if (announcement.offer.price >= 10000 && announcement.offer.price <= 50000) {
+    } else if (announcement.offer.price >= AveragePriceOfAccommodation.MIN
+        && announcement.offer.price <= AveragePriceOfAccommodation.MAX) {
       priceOfAccommodation = 'middle';
-    } else if (announcement.offer.price > 50000) {
+    } else if (announcement.offer.price > AveragePriceOfAccommodation.MAX) {
       priceOfAccommodation = 'high';
     }
 
@@ -32,63 +38,61 @@ window.filter = (function () {
   };
 
   var isPriceMatches = function (announcement) {
-    return getPriceOfAccommodationInText(announcement) === priceFilter.value || priceFilter.value === 'any';
+    return getPriceOfAccommodationInText(announcement) === priceFilter.value
+      || priceFilter.value === 'any';
   };
 
-  var isRoomsNumberMatches = function (announcement) {
-    return announcement.offer.rooms === +numberOfRoomsFilter.value || numberOfRoomsFilter.value === 'any';
+  var isRoomsQuantityMatches = function (announcement) {
+    return announcement.offer.rooms === +quantityOfRoomsFilter.value
+      || quantityOfRoomsFilter.value === 'any';
   };
 
-  var isGuestsNumberMatches = function (announcement) {
-    return announcement.offer.guests === +numberOfGuestsFilter.value || numberOfGuestsFilter.value === 'any';
+  var isGuestsQuantityMatches = function (announcement) {
+    return announcement.offer.guests === +quantityOfGuestsFilter.value
+      || quantityOfGuestsFilter.value === 'any';
   };
 
   var isFeaturesMatches = function (announcement) {
     var features = announcement.offer.features;
-    var matches = checkedFeatureValues.every(function (checkedValue) {
-      return features.indexOf(checkedValue) !== -1;
+    var isMatching = chosenFeatureValues.every(function (chosenValue) {
+      return features.includes(chosenValue);
     });
 
-    return matches;
+    return isMatching;
   };
 
-  var filter = function (data) {
+  var getFilteredData = function (data) {
     var filteredData = [];
 
-    for (var i = 0; i < data.length; i++) { // использую for вместо forEach, тк нужен break
+    for (var i = 0; i < data.length && filteredData.length < MAX_SIMILAR_ANNOUNCEMENTS_QUANTITY; i++) {
       var announcement = data[i];
 
       if (isTypeOfAccommodationMatches(announcement) && isPriceMatches(announcement)
-        && isRoomsNumberMatches(announcement) && isGuestsNumberMatches(announcement)
-        && isFeaturesMatches(announcement) && announcement.offer) { // добавила проверку существования свойства offer сюда - 5.2 ТЗ
+        && isRoomsQuantityMatches(announcement) && isGuestsQuantityMatches(announcement)
+        && isFeaturesMatches(announcement) && announcement.offer) {
         filteredData.push(announcement);
-      }
-      if (filteredData.length === MAX_SIMILAR_ANNOUNCEMENTS_COUNT) {
-        break;
       }
     }
 
     return filteredData;
   };
 
-  var getCheckedFeatureValues = function () {
-    var checkedFeatures = featuresFilter.querySelectorAll('input[type=checkbox]:checked');
+  var findChosenFeatureValues = function () {
+    var chosenFeatures = featuresFilter.querySelectorAll('input[type=checkbox]:checked');
 
-    checkedFeatureValues = [];
-
-    Array.from(checkedFeatures).forEach(function (feature) {
-      checkedFeatureValues.push(feature.value);
+    chosenFeatureValues = Array.from(chosenFeatures).map(function (feature) {
+      return feature.value;
     });
   };
 
   mapFiltersForm.addEventListener('change', function () {
-    window.card.closeCard();
-    getCheckedFeatureValues();
-    window.pins.drawPins(window.pins.getAnnouncements());
+    window.card.close();
+    findChosenFeatureValues();
+    window.pins.drawWithDebounce(window.pins.getAnnouncements());
   });
 
   return {
-    mapFiltersForm: mapFiltersForm,
-    data: filter
+    mapForm: mapFiltersForm,
+    data: getFilteredData
   };
 })();
