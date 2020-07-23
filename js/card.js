@@ -116,6 +116,7 @@ window.card = (function () {
   var closeCard = function () {
     if (window.pins.active()) {
       window.pins.active().classList.remove('map__pin--active');
+      window.pins.clearActive();
     }
     if (announcementCard) {
       announcementCard.remove();

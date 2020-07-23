@@ -114,8 +114,13 @@ window.pins = (function () {
     return activePin;
   };
 
+  var clearActivePin = function () {
+    activePin = undefined;
+  };
+
   return {
     active: getActivePin,
+    clearActive: clearActivePin,
     load: load,
     remove: removePins,
     draw: drawPins,
