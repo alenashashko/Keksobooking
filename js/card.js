@@ -81,12 +81,12 @@ window.card = (function () {
     var offerPhoto = offerPhotosContainer.querySelector('.popup__photo');
 
     if (announcement.offer.photos.length > 0) {
-      for (var j = 0; j < announcement.offer.photos.length; j++) {
+      announcement.offer.photos.forEach(function (it) {
         var photo = offerPhoto.cloneNode(false);
 
-        photo.src = announcement.offer.photos[j];
+        photo.src = it;
         fragment.appendChild(photo);
-      }
+      });
 
       offerPhotosContainer.innerHTML = '';
       offerPhotosContainer.appendChild(fragment);
