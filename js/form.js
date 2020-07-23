@@ -25,7 +25,7 @@ window.form = (function () {
   var errorMessageTemplate = document.querySelector('#error')
     .content
     .querySelector('.error');
-  var mainElement = document.querySelector('main');
+  var mainContainer = document.querySelector('main');
   var invalidFields = [];
 
   var accommodationTypeToPrice = {
@@ -71,7 +71,7 @@ window.form = (function () {
       window.filter.mapForm.reset();
       announcementForm.reset();
       window.form.setAddressValue('inactive');
-      mainElement.appendChild(successMessage);
+      mainContainer.appendChild(successMessage);
 
       var openedSuccessMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {
@@ -93,7 +93,7 @@ window.form = (function () {
       var errorMessage = errorMessageTemplate.cloneNode(true);
       var errorButton = errorMessage.querySelector('.error__button');
 
-      mainElement.appendChild(errorMessage);
+      mainContainer.appendChild(errorMessage);
 
       var openedErrorMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {

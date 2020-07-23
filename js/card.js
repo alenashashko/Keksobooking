@@ -5,7 +5,7 @@ window.card = (function () {
   var announcementCardTemplate = document.querySelector('#card')
     .content
     .querySelector('.map__card');
-  var mapFiltersContainerElement = document.querySelector('.map__filters-container');
+  var mapFiltersContainer = document.querySelector('.map__filters-container');
   var announcementCard;
 
   var accommodationTypeListMap = {
@@ -27,31 +27,31 @@ window.card = (function () {
   };
 
   var createUniqueAnnouncementCard = function (announcement) {
-    var cardElement = announcementCardTemplate.cloneNode(true);
+    var cardContainer = announcementCardTemplate.cloneNode(true);
 
     // title, address and price
-    cardElement.querySelector('.popup__title').textContent = announcement.offer.title;
-    cardElement.querySelector('.popup__text--address').textContent = announcement.offer.address;
-    cardElement.querySelector('.popup__text--price').textContent = announcement.offer.price
+    cardContainer.querySelector('.popup__title').textContent = announcement.offer.title;
+    cardContainer.querySelector('.popup__text--address').textContent = announcement.offer.address;
+    cardContainer.querySelector('.popup__text--price').textContent = announcement.offer.price
       + '₽/ночь';
 
     // type of accommodation
     var offerType = accommodationTypeListMap[announcement.offer.type];
 
-    cardElement.querySelector('.popup__type').textContent = offerType;
+    cardContainer.querySelector('.popup__type').textContent = offerType;
 
     // number of guests and rooms
-    cardElement.querySelector('.popup__text--capacity')
+    cardContainer.querySelector('.popup__text--capacity')
       .textContent = announcement.offer.rooms + ' комнаты для ' + announcement.offer.guests
         + ' гостей';
 
     // check-in and check-out time
-    cardElement.querySelector('.popup__text--time')
+    cardContainer.querySelector('.popup__text--time')
       .textContent = 'Заезд после ' + announcement.offer.checkin + ', выезд до '
         + announcement.offer.checkout;
 
     // features
-    var offerFeaturesContainerElement = cardElement.querySelector('.popup__features');
+    var offerFeaturesContainer = cardContainer.querySelector('.popup__features');
     var fragment = document.createDocumentFragment();
     var features = announcement.offer.features;
 
@@ -61,24 +61,24 @@ window.card = (function () {
         fragment.appendChild(feature);
       });
 
-      offerFeaturesContainerElement.innerHTML = '';
-      offerFeaturesContainerElement.appendChild(fragment);
+      offerFeaturesContainer.innerHTML = '';
+      offerFeaturesContainer.appendChild(fragment);
     } else {
-      offerFeaturesContainerElement.remove();
+      offerFeaturesContainer.remove();
     }
 
     // description
-    var offerDescriptionContainerElement = cardElement.querySelector('.popup__description');
+    var offerDescriptionContainer = cardContainer.querySelector('.popup__description');
 
     if (announcement.offer.description.length > 0) {
-      offerDescriptionContainerElement.textContent = announcement.offer.description;
+      offerDescriptionContainer.textContent = announcement.offer.description;
     } else {
-      offerDescriptionContainerElement.remove();
+      offerDescriptionContainer.remove();
     }
 
     // photos
-    var offerPhotosContainerElement = cardElement.querySelector('.popup__photos');
-    var offerPhoto = offerPhotosContainerElement.querySelector('.popup__photo');
+    var offerPhotosContainer = cardContainer.querySelector('.popup__photos');
+    var offerPhoto = offerPhotosContainer.querySelector('.popup__photo');
 
     if (announcement.offer.photos.length > 0) {
       for (var j = 0; j < announcement.offer.photos.length; j++) {
@@ -88,17 +88,17 @@ window.card = (function () {
         fragment.appendChild(photo);
       }
 
-      offerPhotosContainerElement.innerHTML = '';
-      offerPhotosContainerElement.appendChild(fragment);
+      offerPhotosContainer.innerHTML = '';
+      offerPhotosContainer.appendChild(fragment);
     } else {
-      offerPhotosContainerElement.remove();
+      offerPhotosContainer.remove();
     }
 
     // avatar
-    cardElement.querySelector('.popup__avatar').src = announcement.author.avatar;
+    cardContainer.querySelector('.popup__avatar').src = announcement.author.avatar;
 
-    announcementCard = cardElement;
-    map.insertBefore(cardElement, mapFiltersContainerElement);
+    announcementCard = cardContainer;
+    map.insertBefore(cardContainer, mapFiltersContainer);
   };
 
   var openCard = function (announcement) {

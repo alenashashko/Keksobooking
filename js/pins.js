@@ -7,12 +7,12 @@ window.pins = (function () {
   };
 
   var errorMessageTemplate = document.querySelector('#error')
-  .content
-  .querySelector('.error');
-  var mainElement = document.querySelector('main');
+    .content
+    .querySelector('.error');
+  var mainContainer = document.querySelector('main');
   var pinTemplate = document.querySelector('#pin')
-  .content
-  .querySelector('.map__pin');
+    .content
+    .querySelector('.map__pin');
   var pinsList = document.querySelector('.map__pins');
   var announcements = [];
   var activePin;
@@ -39,7 +39,7 @@ window.pins = (function () {
       var errorButton = errorMessage.querySelector('.error__button');
 
       errorMessageText.textContent = message;
-      mainElement.appendChild(errorMessage);
+      mainContainer.appendChild(errorMessage);
 
       var openedErrorMessageEscapePressHandler = function (evt) {
         if (window.util.isEscapeEvent(evt)) {
@@ -67,17 +67,17 @@ window.pins = (function () {
   };
 
   var getUniquePin = function (announcement) {
-    var pinElement = pinTemplate.cloneNode(true);
-    var pinImage = pinElement.querySelector('img');
+    var pin = pinTemplate.cloneNode(true);
+    var pinImage = pin.querySelector('img');
 
-    pinElement.style.left = announcement.location.x - PinSize.WIDTH / 2 + 'px';
-    pinElement.style.top = announcement.location.y - PinSize.HEIGHT + 'px';
+    pin.style.left = announcement.location.x - PinSize.WIDTH / 2 + 'px';
+    pin.style.top = announcement.location.y - PinSize.HEIGHT + 'px';
 
     pinImage.src = announcement.author.avatar;
     pinImage.alt = announcement.offer.title;
 
-    pinElement.addEventListener('click', function () {
-      if (activePin === pinElement) {
+    pin.addEventListener('click', function () {
+      if (activePin === pin) {
         return;
       }
 
@@ -85,14 +85,14 @@ window.pins = (function () {
         activePin.classList.remove('map__pin--active');
       }
 
-      pinElement.classList.add('map__pin--active');
+      pin.classList.add('map__pin--active');
       window.card.close();
       window.card.open(announcement);
 
-      activePin = pinElement;
+      activePin = pin;
     });
 
-    return pinElement;
+    return pin;
   };
 
   var removePins = function () {

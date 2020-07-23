@@ -7,7 +7,7 @@ window.loadFiles = (function () {
   var avatarChooser = document.querySelector('#avatar');
   var avatarPreview = document.querySelector('.ad-form-header__preview img');
   var accommodationPhotoChooser = document.querySelector('#images');
-  var accommodationPhotoContainerElement = document.querySelector('.ad-form__photo');
+  var accommodationPhotoContainer = document.querySelector('.ad-form__photo');
 
   var isFileTypeMatches = function (file) {
     var fileName = file.name.toLowerCase();
@@ -24,7 +24,7 @@ window.loadFiles = (function () {
   };
 
   var deleteAccommodationPhoto = function () {
-    accommodationPhotoContainerElement.innerHTML = '';
+    accommodationPhotoContainer.innerHTML = '';
   };
 
   avatarChooser.addEventListener('change', function () {
@@ -54,7 +54,7 @@ window.loadFiles = (function () {
         photo.style.width = '100%';
         photo.style.height = '100%';
 
-        accommodationPhotoContainerElement.appendChild(photo);
+        accommodationPhotoContainer.appendChild(photo);
       });
 
       reader.readAsDataURL(accommodationPhoto);
