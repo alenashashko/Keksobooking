@@ -23,21 +23,11 @@ window.page = (function () {
     map.classList.remove('map--faded');
     announcementForm.classList.remove('ad-form--disabled');
 
-    window.pins.draw(window.pins.getAnnouncements());
+    // load new data
+    window.backend.loadData(window.pins.load.successHandler, window.pins.load.errorHandler);
 
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
-
-    if (window.pins.getAnnouncements().length > 0) {
-      toggleDisabledElementsAttribute(mapFilters, false);
-
-      Array.from(mapFilters).forEach(function (filter) {
-        filter.style.cursor = 'pointer';
-      });
-      Array.from(featuresFromMapFilters).forEach(function (feature) {
-        feature.style.cursor = 'pointer';
-      });
-    }
   };
 
   var setInactivePageStatus = function () {
@@ -65,15 +55,15 @@ window.page = (function () {
     window.loadFiles.deleteAvatar();
     window.loadFiles.deleteAccommodationPhoto();
 
-    // load new data
-    window.backend.loadData(window.pins.load.successHandler, window.pins.load.errorHandler);
-
     // init functions
     window.map.addHandlersToMainPin();
   };
 
   return {
+    mapFilters: mapFilters,
+    featuresFromMapFilters: featuresFromMapFilters,
     setActiveStatus: setActivePageStatus,
-    setInactiveStatus: setInactivePageStatus
+    setInactiveStatus: setInactivePageStatus,
+    toggleDisabledElementsAttribute: toggleDisabledElementsAttribute
   };
 })();

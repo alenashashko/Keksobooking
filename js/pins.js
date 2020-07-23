@@ -20,6 +20,18 @@ window.pins = (function () {
   var load = {
     successHandler: function (data) {
       announcements = data;
+
+      // draw pins
+      drawPins(announcements);
+
+      window.page.toggleDisabledElementsAttribute(window.page.mapFilters, false);
+
+      Array.from(window.page.mapFilters).forEach(function (filter) {
+        filter.style.cursor = 'pointer';
+      });
+      Array.from(window.page.featuresFromMapFilters).forEach(function (feature) {
+        feature.style.cursor = 'pointer';
+      });
     },
     errorHandler: function (message) {
       var errorMessage = errorMessageTemplate.cloneNode(true);
@@ -38,7 +50,8 @@ window.pins = (function () {
 
       errorButton.addEventListener('click', function () {
         errorMessage.remove();
-        window.page.setInactivePageStatus();
+        window.page.setInactiveStatus();
+        window.backend.loadData(load.successHandler, load.errorHandler);
         document.removeEventListener('keydown', openedErrorMessageEscapePressHandler);
       });
 
@@ -123,7 +136,6 @@ window.pins = (function () {
     clearActive: clearActivePin,
     load: load,
     remove: removePins,
-    draw: drawPins,
     drawWithDebounce: window.util.debounce(drawPins),
     getAnnouncements: getAnnouncements
   };
