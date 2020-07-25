@@ -70,7 +70,7 @@ window.form = (function () {
       window.page.setInactiveStatus();
       window.filter.mapForm.reset();
       announcementForm.reset();
-      window.filter.getEmptyChosenFeatureValues();
+      window.filter.setEmptyChosenFeatureValues();
       window.form.setAddressValue('inactive');
       mainContainer.appendChild(successMessage);
 
@@ -164,7 +164,7 @@ window.form = (function () {
 
     window.page.setInactiveStatus();
     window.filter.mapForm.reset();
-    window.filter.getEmptyChosenFeatureValues();
+    window.filter.setEmptyChosenFeatureValues();
     announcementForm.reset();
     setAddressValue('inactive');
   });

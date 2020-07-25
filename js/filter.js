@@ -91,13 +91,13 @@ window.filter = (function () {
     window.pins.drawWithDebounce(window.pins.getAnnouncements());
   });
 
-  var getEmptyChosenFeatureValues = function () {
+  var setEmptyChosenFeatureValues = function () {
     chosenFeatureValues = [];
   };
 
   return {
     mapForm: mapFiltersForm,
     data: getFilteredData,
-    getEmptyChosenFeatureValues: getEmptyChosenFeatureValues
+    setEmptyChosenFeatureValues: setEmptyChosenFeatureValues
   };
 })();
