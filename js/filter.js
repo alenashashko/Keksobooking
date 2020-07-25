@@ -91,8 +91,13 @@ window.filter = (function () {
     window.pins.drawWithDebounce(window.pins.getAnnouncements());
   });
 
+  var getEmptyChosenFeatureValues = function () {
+    chosenFeatureValues = [];
+  };
+
   return {
     mapForm: mapFiltersForm,
-    data: getFilteredData
+    data: getFilteredData,
+    getEmptyChosenFeatureValues: getEmptyChosenFeatureValues
   };
 })();
