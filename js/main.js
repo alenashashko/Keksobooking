@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+window.main = (function () {
   var windowLoadHandler = function () {
     window.page.setInactiveStatus();
     window.form.validateMinPrice();

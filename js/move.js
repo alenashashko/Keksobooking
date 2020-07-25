@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+window.move = (function () {
   var MainPinSize = {
     TOTAL_HEIGHT: 84,
     WIDTH: 65
