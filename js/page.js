@@ -24,7 +24,9 @@ window.page = (function () {
     announcementForm.classList.remove('ad-form--disabled');
 
     // load new data
-    window.backend.loadData(window.pins.load.successHandler, window.pins.load.errorHandler);
+    // window.backend.loadData(window.pins.load.successHandler, window.pins.load.errorHandler);
+    // use mocks
+    window.pins.load.successHandler(window.mocks.getAnnouncementsArray());
 
     window.form.setAddressValue('active');
     toggleDisabledElementsAttribute(announcementFormFieldsets, false);
